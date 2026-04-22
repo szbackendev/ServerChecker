@@ -3,13 +3,17 @@ from re import search as re_search
 
 
 print("IP-адрес вида x.x.x.x")
-server_ip = input("Введите ip адрес сервера: ")
+# server_ip = input("Введите ip адрес сервера: ")
 default_server_ip = "144.31.134.15"
 
 
-def ping(server_ip=default_server_ip):
+def ping(server_ip=default_server_ip, packet_size=32, count=4):
+    print("Пингуем...")
     text = subprocess_run(
-        ["ping", server_ip], capture_output=True, text=True, encoding="cp866"
+        f"ping -l {packet_size} -n {count} {server_ip}",
+        capture_output=True,
+        text=True,
+        encoding="cp866",
     ).stdout
     finded_text = re_search(r"Среднее = \d+ мсек", text)
     if finded_text is None:
