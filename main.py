@@ -22,11 +22,21 @@ def ping(server_ip, packet_size=32, count=4) -> str:
         return avg[avg.find("=") + 2 :]
 
 
-def manual_ping(latency=True):
+def manual_ping(
+    latency=True,
+    status=True,
+    cpu_load=True,
+    ram_load=True,
+    disk_space=True,
+    enabled_services=True,
+    simple_hello=True,
+):
     print(f"\nВыбрана функция {funcs[1]['name'].lower()}")
     server_ip = ip_choice()
     if latency:
         print(ping(server_ip))
+    if simple_hello:
+        pass
     return "Завершение manual_ping функции, IP сервера:" + server_ip
 
 
