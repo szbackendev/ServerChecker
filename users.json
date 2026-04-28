@@ -1,0 +1,9 @@
+{
+  "id0": {
+    "login": "login0",
+    "password_hash": "password_hash0",
+    "reg_data": "reg_data0",
+    "ip": "ip0",
+    "comment": "Template"
+  }
+}

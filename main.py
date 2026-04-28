@@ -1,10 +1,17 @@
 from subprocess import run as subprocess_run
 from re import search as re_search, match as re_match
-
+from fastapi import FastAPI
+import json
+import argon2
 
 DEF_SERVER_IP = "144.31.134.15"
 FILE_NAME = "known_IPs.txt"
 
+app = FastAPI()
+
+@app.get("/")
+def main():
+    return {"message": "Hello World"}
 
 def ping(server_ip, packet_size=32, count=4) -> str:
     print("\nПингуем...")
@@ -171,5 +178,74 @@ def ip_choice() -> str:  # должен вернуть IP-адрес
 
     return "Ошибка2"
 
+def get_users() -> dict:
+    with open("users.json", mode="a+", encoding="utf-8") as file:
+        file.seek(0)
+        data = file.readlines()
+        if data:
+            try:
+                file.seek(0)
+                data = json.load(file)
+                return data
+            except:
+                raise ValueError("Данные в файле users.json не в формате JSON")
+        else:
+            template = {
+                "id0": {
+                    "login": "login0",
+                    "password_hash":"password_hash0",
+                    "reg_data":"reg_data0",
+                    "ip": "ip0",
+                    "comment": "Template"
+                    },
+                "id1":{
+                    None:None
+                }
+            }
+            json.dump(template,file, indent=2)
+            raise ValueError("Файл users.json пуст. Записан пример для заполнения файла.")
 
-funcs_choice()
+def sign_in():
+    login = input("Введите логин: ")
+    data = get_users()
+    
+    def login_check(login:str, data:dict) -> bool:
+        for user in data.values():
+            if user["login"] == login.lower().strip():
+                return True
+        return False
+    
+    def password_check(login:str, data:dict, try_count:int=3) -> bool:
+        ph = argon2.PasswordHasher()
+        for _ in range(try_count):
+            password = input("Введите пароль: ")
+            try:
+                if ph.verify(data[login]["password_hash"], password):
+                    return True
+            except:
+                print("Неверный пароль или что-то сломалось. Повторите попытку.")
+        return False
+    
+    if login_check(login, data) and password_check(login, data, try_count=3):
+        # сделать выдачу временного session_token
+        return True
+    else:
+        sign_up()  # ведем на регистрацию, где логин будет .lower().strip()
+
+
+def sign_up():
+    pass  # в планах сделать
+    # Пароль и сохранение его в хэше в users.json в словарик [login]["password_hash"]
+    # Также выдача временного session_token и много еще чего.
+
+def start():
+    # 1. Проверка всех зависимостей.
+    # 2. ...
+    if sign_in():
+        return funcs_choice()
+    else:
+        "Ошибка аутентификации"
+
+if __name__ == "__main__":
+    # start()
+    sign_in()
