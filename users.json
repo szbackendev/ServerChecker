@@ -2,8 +2,19 @@
   "id0": {
     "login": "login0",
     "password_hash": "password_hash0",
+    "session_token": "session_token0",
+    "session_token_expiration_date": "session_token_expiration_date0",
     "reg_data": "reg_data0",
-    "ip": "ip0",
     "comment": "Template"
+  }
+}
+{
+  "id1": {
+    "login": "test1",
+    "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$3qxwoJPFs1YIOJWp/p8gLg$0CZHXuzyxrd0yT5HWh7HIAS7eXddoGO90vjzSX41p90",
+    "session_token": null,
+    "session_token_expiration_date": null,
+    "reg_data": "2026-04-29",
+    "comment": null
   }
 }

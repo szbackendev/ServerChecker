@@ -3,6 +3,8 @@ from re import search as re_search, match as re_match
 from fastapi import FastAPI
 import json
 import argon2
+import secrets
+import datetime
 
 DEF_SERVER_IP = "144.31.134.15"
 FILE_NAME = "known_IPs.txt"
@@ -178,6 +180,13 @@ def ip_choice() -> str:  # должен вернуть IP-адрес
 
     return "Ошибка2"
 
+# сделать получение даты локально или time.google.com
+# def current_date(detailed = False):
+#     if detailed:
+#         pass
+#     else:
+#         pass
+
 def get_users() -> dict:
     with open("users.json", mode="a+", encoding="utf-8") as file:
         file.seek(0)
@@ -194,24 +203,30 @@ def get_users() -> dict:
                 "id0": {
                     "login": "login0",
                     "password_hash":"password_hash0",
+                    "session_token": "session_token0",
+                    "session_token_expiration_date": "session_token_expiration_date0",
                     "reg_data":"reg_data0",
-                    "ip": "ip0",
                     "comment": "Template"
-                    },
-                "id1":{
-                    None:None
-                }
+                    }
             }
             json.dump(template,file, indent=2)
             raise ValueError("Файл users.json пуст. Записан пример для заполнения файла.")
+        
+def get_next_id() -> str:
+    data = get_users()
+    for last_id in reversed(data):
+        return f"id{int(last_id[last_id.find("id") + 2:]) + 1}"
+        
 
 def sign_in():
-    login = input("Введите логин: ")
     data = get_users()
-    
+    user_id = str()
+
     def login_check(login:str, data:dict) -> bool:
-        for user in data.values():
+        for id, user in data.items():
             if user["login"] == login.lower().strip():
+                nonlocal user_id
+                user_id = id
                 return True
         return False
     
@@ -220,27 +235,86 @@ def sign_in():
         for _ in range(try_count):
             password = input("Введите пароль: ")
             try:
-                if ph.verify(data[login]["password_hash"], password):
+                if ph.verify(data[user_id]["password_hash"], password):
                     return True
             except:
                 print("Неверный пароль или что-то сломалось. Повторите попытку.")
         return False
     
-    if login_check(login, data) and password_check(login, data, try_count=3):
-        # сделать выдачу временного session_token
-        return True
-    else:
-        sign_up()  # ведем на регистрацию, где логин будет .lower().strip()
+    while True:
+        login = input("Введите логин: ")
+        
+        if login_check(login, data) and password_check(login, data, try_count=3):
+            # session_token = secrets.token_hex(64)
+            # data[user_id]["session_token"] = session_token
+            # data[user_id]["session_token_expiration_date"] = current_date + "7d"
+            # сделать выдачу временного session_token
+            return True
+        else:
+            print("Неправильный логин и/или пароль.\n1. Повторить попытку.\n2. Зарегистрироваться.")
+            user_choice = int(input("Выберите вариант [1-2]"))
+            if user_choice == 1:
+                continue
+            else:
+                break
+    return False  # ведем на регистрацию, где логин будет .lower().strip()
 
 
 def sign_up():
-    pass  # в планах сделать
+    print("\nРегистрация:")
+    
+    
+
+    def is_login_available(login) -> bool:
+        data = get_users()
+        for user in data.values():
+            print(user)
+            if user["login"] == login.lower().strip():
+                return False
+        return True
+    
+    while True:
+        login = input("Введите желаемый логин: ")
+        if is_login_available(login):
+            with open("users.json", mode="a+", encoding="utf-8") as file:
+                password = input("Введите желаемый пароль: ")
+                file.write("\n")
+                data = {get_next_id():{"login": login,"password_hash": argon2.PasswordHasher().hash(password),"session_token": None,"session_token_expiration_date": None,"reg_data": str(datetime.date.today()),"comment": None}}
+                json.dump(data, file, indent=2)
+                #  решить проблему с некорректной записью в файл
+            break
+                
+        else:
+            print("Указаный логин занят.")
+            continue
+
+
+
+
     # Пароль и сохранение его в хэше в users.json в словарик [login]["password_hash"]
     # Также выдача временного session_token и много еще чего.
 
+def reset_password():
+    pass
+
 def start():
     # 1. Проверка всех зависимостей.
-    # 2. ...
+    # 2. Выбор пользователя(регистрация/логин)
+    while True:
+        user_choice = int(input("1. Вход\n2. Регистрация\nВыберите [1-2]: "))
+        if user_choice == 1:
+            if sign_in():
+                break  # пускаем
+            else:
+                print("Не удалось войти.")
+                continue  # не пускаем
+        else:
+            if sign_up():
+                pass  # пускаем
+            else:
+                print("Не удалось зарегистрироваться.")
+                continue  # не пускаем
+    # 3. ...
     if sign_in():
         return funcs_choice()
     else:
@@ -248,4 +322,5 @@ def start():
 
 if __name__ == "__main__":
     # start()
-    sign_in()
+    # sign_in()
+    sign_up()
