@@ -6,15 +6,32 @@
     "session_token_expiration_date": "session_token_expiration_date0",
     "reg_data": "reg_data0",
     "comment": "Template"
-  }
-}
-{
+  },
+ 
   "id1": {
     "login": "test1",
-    "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$3qxwoJPFs1YIOJWp/p8gLg$0CZHXuzyxrd0yT5HWh7HIAS7eXddoGO90vjzSX41p90",
+    "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$9sTmMgy9jLN17789+5aiHw$gCo8gLEYRqeO7tcWmuSnJemrInHS2VQP5MoYMjDEFNQ",
     "session_token": null,
     "session_token_expiration_date": null,
-    "reg_data": "2026-04-29",
+    "reg_data": "2026-05-13",
+    "comment": null
+  },
+ 
+  "id2": {
+    "login": "test2",
+    "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$KHq/tomUoQ4M0bp76TvoOw$k5VMsRh4UHcza1bmJHCzHcRbOt4hR3DGgBgU2u4oIzs",
+    "session_token": null,
+    "session_token_expiration_date": null,
+    "reg_data": "2026-05-13",
+    "comment": null
+  },
+ 
+  "id3": {
+    "login": "t",
+    "password_hash": "$argon2id$v=19$m=65536,t=3,p=4$BbdffiCvUgdOuyoK/ufPuA$l1ScnGuaiqqP82rx/IeNouGJkF+HzYq6fEJnZGZTf2U",
+    "session_token": null,
+    "session_token_expiration_date": null,
+    "reg_data": "2026-05-13",
     "comment": null
   }
 }
