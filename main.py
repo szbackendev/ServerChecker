@@ -208,8 +208,8 @@ def get_users() -> dict:
                     "login": "login0",
                     "password_hash": "password_hash0",
                     "session_token": "session_token0",
-                    "session_token_expiration_date": "session_token_expiration_date0",
-                    "reg_data": "reg_data0",
+                    "session_token_expiration_date": "yyyy-mm-dd",
+                    "reg_data": "yyyy-mm-dd",
                     "comment": "Template",
                 }
             }
