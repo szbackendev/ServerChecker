@@ -1,4 +1,3 @@
-import json
 import argon2
 import secrets
 import datetime
@@ -35,80 +34,47 @@ with sqlite3.connect(USERS_DB_NAME) as users:
     users.commit()
 
 
-def get_users() -> dict:
+def get_users_by_login(login: str) -> tuple:
     with sqlite3.connect(USERS_DB_NAME) as users:
         cursor = users.cursor()
-        cursor.execute("SELECT * FROM Users")
-        columns = [col[0] for col in cursor.description]
-        users_dict = dict()
-
-        for row in cursor.fetchall():
-            user_data = dict(zip(columns[1:], row[1:]))
-            users_dict[row[0]] = user_data
-
-    return users_dict
-
-    # with open("users.json", mode="a+", encoding="utf-8") as file:
-    #     file.seek(0)
-    #     data = file.readlines()
-    #     if data:
-    #         try:
-    #             file.seek(0)
-    #             data = json.load(file)
-    #             return data
-    #         except:
-    #             raise ValueError("Данные в файле users.json не в формате JSON")
-    #     else:
-    #         template = {
-    #             "id0": {
-    #                 "login": "login0",
-    #                 "password_hash": "password_hash0",
-    #                 "session_token": "session_token0",
-    #                 "session_token_expiration_date": "yyyy-mm-dd",
-    #                 "reg_data": "yyyy-mm-dd",
-    #                 "comment": "Template",
-    #             }
-    #         }
-    #         json.dump(template, file, indent=2)
-    #         raise ValueError(
-    #             "Файл users.json пуст. Записан пример для заполнения файла."
-    #         )
-
-
-def get_next_id() -> str | None:
-    data = get_users()
-    for last_id in reversed(data):
-        return last_id + 1
-        # return f"id{int(last_id[last_id.find('id') + 2 :]) + 1}"
+        cursor.execute("SELECT * FROM Users WHERE login = ?", (login.strip().lower(),))
+        result = cursor.fetchone()
+        if result is not None:
+            return result
+        else:
+            return (0,)
 
 
 def sign_in():
-    data = get_users()
-    user_id = str()
 
-    def login_check(login: str, data: dict) -> bool:
-        for id, user in data.items():
-            if user["login"] == login.lower().strip():
-                nonlocal user_id
-                user_id = id
-                return True
+    def login_check(login: str, data: tuple) -> bool:
+        login = login.strip().lower()
+        if login == "login0":  # шо бы не регались под логином с примера
+            return False
+        elif len(data) > 1 and data[1] == login:
+            return True
         return False
 
-    def password_check(login: str, data: dict, try_count: int = 3) -> bool:
+    def password_check(pswd_hash: str, try_count: int = 3) -> bool:
         ph = argon2.PasswordHasher()
         for _ in range(try_count):
             password = input("Введите пароль: ")
             try:
-                if ph.verify(data[user_id]["password_hash"], password):
+                if ph.verify(pswd_hash, password):
                     return True
-            except:
+            except argon2.exceptions.VerificationError:
                 print("Неверный пароль или что-то сломалось. Повторите попытку.")
+            except argon2.exceptions.InvalidHashError:
+                print("Проблема с хэшем. Возможно запись в БД повреждена.")
         return False
 
     while True:
         login = input("Введите логин: ")
+        data = get_users_by_login(login)
 
-        if login_check(login, data) and password_check(login, data, try_count=3):
+        if login_check(login, data) and password_check(
+            data[2], try_count=3
+        ):  # data[2] это индекс в кортеже где находится хэш пароля
             # session_token = secrets.token_hex(64)
             # data[user_id]["session_token"] = session_token
             # data[user_id]["session_token_expiration_date"] = current_date + "7d"
@@ -130,11 +96,9 @@ def sign_up():
     print("\nРегистрация:")
 
     def is_login_available(login) -> bool:
-        data = get_users()
-        for user in data.values():
-            # print(user)
-            if user["login"] == login.lower().strip():
-                return False
+        data = get_users_by_login(login)
+        if len(data) > 1:
+            return False
         return True
 
     while True:
@@ -156,26 +120,6 @@ def sign_up():
                 )
                 users.commit()
             return True
-
-            # with open("users.json", mode="r+", encoding="utf-8") as file:
-            #     password = input("Введите желаемый пароль: ")
-            #     file.seek(0, 2)
-            #     tmp = file.seek(file.tell() - 3) + 3
-            #     file.write(",\n")
-            #     data = {
-            #         get_next_id(): {
-            #             "login": login,
-            #             "password_hash": argon2.PasswordHasher().hash(password),
-            #             "session_token": None,
-            #             "session_token_expiration_date": None,
-            #             "reg_data": str(datetime.date.today()),
-            #             "comment": None,
-            #         }
-            #     }
-            #     json.dump(data, file, indent=2)
-            #     file.seek(tmp)
-            #     file.write(" ")
-            # return True
 
         else:
             print("Указаный логин занят.")
