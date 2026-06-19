@@ -1,8 +1,8 @@
 import argon2
-import secrets
 import sqlite3
 import ntplib
 import datetime
+# import secrets
 
 
 USERS_DB_NAME = "users.sqlite3"

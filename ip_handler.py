@@ -1,4 +1,5 @@
-from re import search as re_search, match as re_match
+# from re import search as re_search
+from re import match as re_match
 from ping_utils import manual_ping
 
 
