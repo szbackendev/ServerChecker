@@ -1,7 +1,8 @@
 import argon2
 import secrets
-import datetime
 import sqlite3
+import ntplib
+import datetime
 
 
 USERS_DB_NAME = "users.sqlite3"
@@ -104,6 +105,12 @@ def sign_up():
     while True:
         login = input("Введите желаемый логин: ")
         if is_login_available(login):
+            ntplib_client = ntplib.NTPClient()
+            response = ntplib_client.request("ru.pool.ntp.org", version=4)
+            utc_time = datetime.datetime.fromtimestamp(
+                response.tx_time, tz=datetime.timezone.utc
+            )
+
             with sqlite3.connect(USERS_DB_NAME) as users:
                 password = input("Введите желаемый пароль: ")
                 cursor = users.cursor()
@@ -114,7 +121,7 @@ def sign_up():
                         argon2.PasswordHasher().hash(password),
                         None,
                         None,
-                        str(datetime.date.today()),
+                        str(utc_time)[:11],  # дата регистрации в формате yyyy-mm-dd
                         None,
                     ),
                 )

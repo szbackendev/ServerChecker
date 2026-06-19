@@ -1,6 +1,6 @@
 from subprocess import run as subprocess_run
-from ip_handler import ip_choice, funcs
 from re import search as re_search
+
 
 def ping(server_ip, packet_size=32, count=4) -> str:
     print("\nПингуем...")
@@ -19,6 +19,7 @@ def ping(server_ip, packet_size=32, count=4) -> str:
 
 
 def manual_ping(
+    server_ip,
     latency=True,
     status=True,
     cpu_load=True,
@@ -27,8 +28,8 @@ def manual_ping(
     enabled_services=True,
     simple_hello=True,
 ):
-    print(f"\nВыбрана функция {funcs[1]['name'].lower()}")
-    server_ip = ip_choice()
+    print("\nВыбрана функция ручной пинг-чек")
+    # server_ip = ip_choice()
     if latency:
         print(ping(server_ip))
     if simple_hello:

@@ -2,7 +2,7 @@ from re import search as re_search, match as re_match
 from ping_utils import manual_ping
 
 
-DEF_SERVER_IP = "144.31.134.15"
+DEF_SERVER_IP = "1.1.1.1"
 FILE_NAME = "known_IPs.txt"
 
 
@@ -15,6 +15,7 @@ funcs = {
     3: {"name": "Выход", "func": exit},
 }
 
+
 def funcs_choice() -> None:
     while True:
         print(
@@ -25,6 +26,13 @@ def funcs_choice() -> None:
         )
         if user_choice not in funcs:
             print("\nВведите корректное число")
+        elif user_choice == 1:
+            ip = ip_choice()
+            if ip == "back":
+                continue
+            else:
+                print(funcs[user_choice]["func"](ip))
+                break
         else:
             print(funcs[user_choice]["func"]())
             break
@@ -53,7 +61,13 @@ def new_IP() -> (
         else:
             print("\nВведенная строка не является IP-адресом. Формат: X.X.X.X")
     with open(FILE_NAME, mode="a+", encoding="utf-8") as file:
-        file.write(f"{user_ip}\n")
+        file.seek(0)
+        strings = list()
+        for string in file.readlines():
+            strings.append(string.strip("\n"))
+        ips = list(dict.fromkeys(strings))
+        if user_ip not in ips:
+            file.write(f"{user_ip}\n")
     return user_ip
 
 
@@ -94,10 +108,14 @@ def prev_IPs_choose_gt_5(
         return ip_choice_result[user_ip_choice_0_5 - 1].strip()  # возвращаем IP-адрес
 
 
-ip_choice_dict = {1: prev_IPs, 2: new_IP, 3: lambda: funcs_choice()}
+def back():
+    return "back"
 
 
 def ip_choice() -> str:  # должен вернуть IP-адрес
+
+    ip_choice_dict = {1: prev_IPs, 2: new_IP, 3: back}
+
     while True:
         print(
             "\n1. Выбрать из предыдущих IP-адресов\n2. Ввести новый IP-адрес\n3. Назад"
@@ -131,7 +149,7 @@ def ip_choice() -> str:  # должен вернуть IP-адрес
                 ):  # если вернулась такая строка от prev_IPs()
                     print("\n", ip_choice_result, sep="")
                     continue
+                elif ip_choice_result == "back":
+                    return "back"
                 else:
-                    return "Ошибка1"
-
-    return "Ошибка2"
+                    return "Ошибка1"  # ошибка1 для отладки чтоб понять где упал

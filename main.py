@@ -11,9 +11,6 @@ def main():
     return {"message": "Hello World"}
 
 
-
-
-
 # сделать получение даты локально или time.google.com
 # def current_date(detailed = False):
 #     if detailed:
@@ -47,5 +44,3 @@ def start():
 
 if __name__ == "__main__":
     start()
-    # sign_in()
-    # sign_up()
