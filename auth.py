@@ -19,6 +19,7 @@ with sqlite3.connect(USERS_DB_NAME) as users:
                    reg_date TEXT NOT NULL,
                    comment TEXT
                    )""")
+
     cursor.execute("SELECT COUNT(*) FROM Users")
     if cursor.fetchone()[0] == 0:
         cursor.execute(
@@ -56,12 +57,12 @@ def sign_in():
             return True
         return False
 
-    def password_check(pswd_hash: str, try_count: int = 3) -> bool:
+    def password_check(password_hash: str, try_count: int = 3) -> bool:
         ph = argon2.PasswordHasher()
         for _ in range(try_count):
             password = input("Введите пароль: ")
             try:
-                if ph.verify(pswd_hash, password):
+                if ph.verify(password_hash, password):
                     return True
             except argon2.exceptions.VerificationError:
                 print("Неверный пароль или что-то сломалось. Повторите попытку.")
@@ -70,6 +71,7 @@ def sign_in():
         return False
 
     while True:
+        global login
         login = input("Введите логин: ")
         data = get_users_by_login(login)
 
@@ -103,6 +105,7 @@ def sign_up():
         return True
 
     while True:
+        global login
         login = input("Введите желаемый логин: ")
         if is_login_available(login):
             ntplib_client = ntplib.NTPClient()
@@ -137,4 +140,4 @@ def sign_up():
 
 
 def reset_password():
-    pass
+    pass  # доделать функцию сброса пароля

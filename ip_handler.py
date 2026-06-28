@@ -1,6 +1,8 @@
 # from re import search as re_search
 from re import match as re_match
 from ping_utils import manual_ping
+from auth import USERS_DB_NAME
+import sqlite3
 
 
 DEF_SERVER_IP = "1.1.1.1"
@@ -40,16 +42,30 @@ def funcs_choice() -> None:
     return None
 
 
-def prev_IPs() -> str | list:
-    with open(FILE_NAME, mode="a+", encoding="utf-8") as file:
-        file.seek(0)
-        strings = file.readlines()
-    if len(strings) == 0:
-        return "Список предыдущих IP-адресов пуст."
-    else:
-        return strings[
-            ::-1
-        ]  # возвращает список содержащий все строки из файла в обратном порядке(чтоб последний введеный ip был сверху)
+def prev_IPs() -> (
+    str | list
+):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
+    with sqlite3.connect(USERS_DB_NAME) as users:
+        cursor = users.cursor()
+        cursor.execute("""SELECT EXISTS (
+                       SELECT 1
+                       FROM sqlite_master
+                       WHERE type = 'table' AND name = 'known_IPs'
+                       )""")
+        if cursor.fetchone()[0] == 0:
+            return "Список предыдущих IP-адресов пуст."
+        else:
+            return cursor.fetchall()
+
+    # with open(FILE_NAME, mode="a+", encoding="utf-8") as file:
+    #     file.seek(0)
+    #     strings = file.readlines()
+    # if len(strings) == 0:
+    #     return "Список предыдущих IP-адресов пуст."
+    # else:
+    #     return strings[
+    #         ::-1
+    #     ]  # возвращает список содержащий все строки из файла в обратном порядке(чтоб последний введеный ip был сверху)
 
 
 def new_IP() -> (
@@ -61,15 +77,39 @@ def new_IP() -> (
             break
         else:
             print("\nВведенная строка не является IP-адресом. Формат: X.X.X.X")
-    with open(FILE_NAME, mode="a+", encoding="utf-8") as file:
-        file.seek(0)
-        strings = list()
-        for string in file.readlines():
-            strings.append(string.strip("\n"))
-        ips = list(dict.fromkeys(strings))
-        if user_ip not in ips:
-            file.write(f"{user_ip}\n")
+
+    with sqlite3.connect(USERS_DB_NAME) as users:
+        cursor = users.cursor()
+
+        cursor.execute("""CREATE TABLE IF NOT EXISTS known_IPs (
+                       id INTEGER PRIMARY KEY,
+                       user_id INTEGER NOT NULL,
+                       ip TEXT NOT NULL
+                       )""")
+
+        cursor.execute(
+            "INSERT OR IGNORE INTO known_IPs (ip) VALUES (?)",
+            (user_ip,),
+        )
+
+        cursor.execute("SELECT COUNT(*) FROM known_IPs")
+
+        if cursor.fetchone()[0] > 5:
+            cursor.execute(
+                "DELETE FROM known_IPs WHERE id = (SELECT MIN(id) FROM known_IPs)"
+            )
+
+        users.commit()
     return user_ip
+    # with open(FILE_NAME, mode="a+", encoding="utf-8") as file:
+    #     file.seek(0)
+    #     strings = list()
+    #     for string in file.readlines():
+    #         strings.append(string.strip("\n"))
+    #     ips = list(dict.fromkeys(strings))
+    #     if user_ip not in ips:
+    #         file.write(f"{user_ip}\n")
+    # return user_ip
 
 
 def prev_IPs_choose_le_5(
