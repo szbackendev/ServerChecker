@@ -42,9 +42,27 @@ def funcs_choice() -> None:
     return None
 
 
+def get_user_id():
+    from auth import login as rawlogin, get_users_by_login
+
+    user_id = get_users_by_login(
+        rawlogin
+    )[
+        0
+    ]  # если len(get_users_by_login(rawlogin)) = 1, то там пустой кортеж без инфы о юзере
+
+    if user_id == 0:
+        raise ValueError("user_id не найден в БД !")
+
+    return user_id
+
+
 def prev_IPs() -> (
     str | list
 ):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
+
+    user_id = get_user_id()
+
     with sqlite3.connect(USERS_DB_NAME) as users:
         cursor = users.cursor()
         cursor.execute("""SELECT EXISTS (
@@ -55,7 +73,17 @@ def prev_IPs() -> (
         if cursor.fetchone()[0] == 0:
             return "Список предыдущих IP-адресов пуст."
         else:
-            return cursor.fetchall()
+            cursor.execute(
+                """SELECT ip FROM known_IPs WHERE user_id = ? ORDER BY id DESC""",
+                (user_id,),
+            )
+            ips = cursor.fetchall()
+
+            if len(ips) == 0:
+                return "Список предыдущих IP-адресов пуст."
+            else:
+                list_of_ips = list(ip[0] for ip in ips)
+                return list_of_ips
 
     # with open(FILE_NAME, mode="a+", encoding="utf-8") as file:
     #     file.seek(0)
@@ -71,6 +99,12 @@ def prev_IPs() -> (
 def new_IP() -> (
     str
 ):  # должна возвращать новый IP-адрес и записывать его в known_IPs.txt
+
+    user_id = get_user_id()  # если len(get_users_by_login(rawlogin)) = 1, то там пустой кортеж без инфы о юзере
+
+    if user_id == 0:
+        raise ValueError("user_id не найден в БД !")
+
     while True:
         user_ip = input("Введите IP-адрес: ")
         if re_match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", user_ip):
@@ -84,19 +118,21 @@ def new_IP() -> (
         cursor.execute("""CREATE TABLE IF NOT EXISTS known_IPs (
                        id INTEGER PRIMARY KEY,
                        user_id INTEGER NOT NULL,
-                       ip TEXT NOT NULL
+                       ip TEXT NOT NULL,
+                       UNIQUE(user_id, ip)
                        )""")
 
         cursor.execute(
-            "INSERT OR IGNORE INTO known_IPs (ip) VALUES (?)",
-            (user_ip,),
+            "INSERT OR IGNORE INTO known_IPs (user_id, ip) VALUES (?,?)",
+            (user_id, user_ip),
         )
 
-        cursor.execute("SELECT COUNT(*) FROM known_IPs")
+        cursor.execute("SELECT COUNT(*) FROM known_IPs WHERE user_id = ?", (user_id,))
 
         if cursor.fetchone()[0] > 5:
             cursor.execute(
-                "DELETE FROM known_IPs WHERE id = (SELECT MIN(id) FROM known_IPs)"
+                "DELETE FROM known_IPs WHERE user_id = ? AND id = (SELECT MIN(id) FROM known_IPs WHERE user_id = ?)",
+                (user_id, user_id),
             )
 
         users.commit()
@@ -120,29 +156,12 @@ def prev_IPs_choose_le_5(
     for i in range(len(ip_choice_result)):
         print(f"{i + 1}. {ip_choice_result[i].strip()}")
     print("0. Назад")
+
     user_ip_choice_0_5 = int(input(f"Выберите номер [0-{len(ip_choice_result)}]: "))
-    if user_ip_choice_0_5 not in range(0, 6):
-        print("Введите корректное число из списка")
-    elif user_ip_choice_0_5 == 0:
+
+    if user_ip_choice_0_5 not in range(0, len(ip_choice_result) + 1):
+        print("\nВведите корректное число из списка")
         return 0
-    else:
-        return ip_choice_result[user_ip_choice_0_5 - 1].strip()  # возвращаем IP-адрес
-
-
-def prev_IPs_choose_gt_5(
-    ip_choice_result: list,
-) -> (
-    str | int | None
-):  # отображение списка ip-адресов из файла known_IPs, чтобы пользователь выбрал
-    print(
-        f"\nБудет отображено только последние 5 IP-адресов, остальные хранятся в файле {FILE_NAME}\n"
-    )
-    for i in range(5):
-        print(f"{i + 1}. {ip_choice_result[i].strip()}")
-    print("0. Назад")
-    user_ip_choice_0_5 = int(input("Выберите номер [0-5]: "))
-    if user_ip_choice_0_5 not in range(0, 6):
-        print("Введите корректное число из списка")
     elif user_ip_choice_0_5 == 0:
         return 0
     else:
@@ -169,19 +188,13 @@ def ip_choice() -> str:  # должен вернуть IP-адрес
         else:
             ip_choice_result = ip_choice_dict[user_ip_choice]()
             if isinstance(ip_choice_result, list):  # если это список с IP-адресами
-                if len(ip_choice_result) > 5:  # если в списке > 5 IP-адресов
-                    user_ip_choice_0_5 = prev_IPs_choose_gt_5(ip_choice_result)
-                    if user_ip_choice_0_5 == 0:  # Если выбрали вернуться Назад
-                        continue  # возврат к выбору/введению IP-адреса
-                    else:
-                        return str(user_ip_choice_0_5)
-                else:  # если в списке <= 5 IP-адресов
-                    print()
-                    ip_choice_result_0_x = prev_IPs_choose_le_5(ip_choice_result)
-                    if ip_choice_result_0_x == 0:
-                        continue  # возврат к выбору/введению IP-адреса
-                    else:
-                        return str(ip_choice_result_0_x)  # возвращаем IP-адрес
+                # если в списке <= 5 IP-адресов
+                print()
+                ip_choice_result_0_x = prev_IPs_choose_le_5(ip_choice_result)
+                if ip_choice_result_0_x == 0:
+                    continue  # возврат к выбору/введению IP-адреса
+                else:
+                    return str(ip_choice_result_0_x)  # возвращаем IP-адрес
             else:  # если это строка
                 if re_match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", ip_choice_result):
                     return ip_choice_result
