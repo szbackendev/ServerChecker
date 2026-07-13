@@ -1,21 +1,26 @@
+import re
 from platform import freedesktop_os_release as platform_freedesktop_os_release
 from subprocess import run as subprocess_run
 
-class server_checker_service:
-        def __init__(self):
-                pass
-        
-        def is_alive(self):
-                check1 = subprocess_run("systemctl is-system-running", capture_output=True, encoding="utf-8", shell=True).stdout
-                if check1.strip() == "running":
-                        return True
-                else:
-                        return False
 
-if platform_freedesktop_os_release()["ID"] in ["debian","ubuntu"]:
+class server_checker_service:
+    def __init__(self):
         pass
-else:
-        print("Данный скрипт работает только на Debian/Ubuntu")
+
+    def is_alive(self):
+        check1 = subprocess_run(
+            ["systemctl", "is-system-running"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        ).stdout
+        return True if re.search(r"RUNNING", check1, flags=re.IGNORECASE) else False
+
+
+if not re.search(
+    r"(DEBIAN|UBUNTU)", platform_freedesktop_os_release()["ID"], flags=re.IGNORECASE
+):
+    print("Данный скрипт работает только на Debian/Ubuntu")
 
 checker = server_checker_service()
 
