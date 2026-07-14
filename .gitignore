@@ -4,3 +4,4 @@ known_IPs.txt
 __pycache__/
 test.py
 .continue
+users.json
