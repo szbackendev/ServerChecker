@@ -1,1 +1,5 @@
-"""Будет позже"""
+fastapi[standart]
+argon2-cffi
+ntplib
+cryptography
+pyjwt

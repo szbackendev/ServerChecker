@@ -2,8 +2,10 @@ import argon2
 import sqlite3
 import ntplib
 import datetime
+from fastapi import APIRouter
 # import secrets
 
+router = APIRouter(prefix="/auth")
 
 USERS_DB_NAME = "users.sqlite3"
 
@@ -49,7 +51,8 @@ def get_users_by_login(login: str) -> tuple:
             return (0,)
 
 
-def sign_in():
+@router.put("/sign_in")
+def sign_in(login: str, password: str):
 
     def login_check(login: str, data: tuple) -> bool:
         login = login.strip().lower()
@@ -59,42 +62,38 @@ def sign_in():
             return True
         return False
 
-    def password_check(password_hash: str, try_count: int = 3) -> bool:
+    def password_check(
+        password: str, password_hash: str, try_count: int = 3
+    ) -> dict | bool:
         ph = argon2.PasswordHasher()
         for _ in range(try_count):
-            password = input("Введите пароль: ")
             try:
                 if ph.verify(password_hash, password):
                     return True
-            except argon2.exceptions.VerificationError:
-                print("Неверный пароль или что-то сломалось. Повторите попытку.")
-            except argon2.exceptions.InvalidHashError:
-                print("Проблема с хэшем. Возможно запись в БД повреждена.")
+            except argon2.exceptions.VerificationError:  # для тестов функции
+                return {
+                    "message": "Неверный пароль или что-то сломалось. Повторите попытку.",
+                    "type": "Error",
+                }
+            except argon2.exceptions.InvalidHashError:  # для тестов функции
+                return {
+                    "message": "Проблема с хэшем. Возможно запись в БД повреждена.",
+                    "type": "Error",
+                }
         return False
 
-    while True:
-        global login
-        login = input("Введите логин: ")
-        data = get_users_by_login(login)
+    data = get_users_by_login(login)
 
-        if login_check(login, data) and password_check(
-            data[2], try_count=3
-        ):  # data[2] это индекс в кортеже где находится хэш пароля
-            # session_token = secrets.token_hex(64)
-            # data[user_id]["session_token"] = session_token
-            # data[user_id]["session_token_expiration_date"] = current_date + "7d"
-            # сделать выдачу временного session_token
-            return True
-        else:
-            print(
-                "Неправильный логин и/или пароль.\n1. Повторить попытку.\n2. Зарегистрироваться."
-            )
-            user_choice = int(input("Выберите вариант [1-2]: "))
-            if user_choice == 1:
-                continue
-            else:
-                break
-    return False  # ведем на регистрацию, где логин будет .lower().strip()
+    if (
+        login_check(login, data)
+        and password_check(password, data[2], try_count=3) is True
+    ):  # data[2] это индекс в кортеже где находится хэш пароля
+        return {"Authorization": "Bearer x", "bool": True}
+    else:
+        return {
+            "message": "Неправильный логин и/или пароль.\n1. Повторить попытку.\n2. Зарегистрироваться.",
+            "bool": False,
+        }  # ведем на регистрацию, где логин будет .lower().strip()
 
 
 def sign_up():
