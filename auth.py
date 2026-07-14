@@ -14,6 +14,7 @@ with sqlite3.connect(USERS_DB_NAME) as users:
                    id INTEGER PRIMARY KEY,
                    login TEXT NOT NULL UNIQUE,
                    password_hash TEXT NOT NULL,
+                   role TEXT NOT NULL,
                    session_token TEXT,
                    session_token_expiration_date TEXT,
                    reg_date TEXT NOT NULL,
@@ -23,10 +24,11 @@ with sqlite3.connect(USERS_DB_NAME) as users:
     cursor.execute("SELECT COUNT(*) FROM Users")
     if cursor.fetchone()[0] == 0:
         cursor.execute(
-            "INSERT INTO Users (login, password_hash, session_token, session_token_expiration_date, reg_date, comment) VALUES (?, ?, ?, ?, ?, ?)",
+            "INSERT INTO Users (login, password_hash, role, session_token, session_token_expiration_date, reg_date, comment) VALUES (?, ?, ?, ?, ?, ?, ?)",
             (
                 "login0",
                 "password_hash0",
+                "user",
                 "session_token0",
                 "yyyy-mm-dd",
                 "yyyy-mm-dd",
@@ -118,10 +120,11 @@ def sign_up():
                 password = input("Введите желаемый пароль: ")
                 cursor = users.cursor()
                 cursor.execute(
-                    "INSERT INTO Users (login, password_hash, session_token, session_token_expiration_date, reg_date, comment) VALUES (?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO Users (login, password_hash, role, session_token, session_token_expiration_date, reg_date, comment) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     (
                         login,
                         argon2.PasswordHasher().hash(password),
+                        "user",
                         None,
                         None,
                         str(utc_time)[:11],  # дата регистрации в формате yyyy-mm-dd
