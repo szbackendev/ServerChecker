@@ -1,4 +1,4 @@
-fastapi[standart]
+fastapi[all]
 argon2-cffi
 ntplib
 cryptography

@@ -3,6 +3,8 @@ import sqlite3
 import ntplib
 import datetime
 from fastapi import APIRouter
+from pydantic_settings import BaseSettings, SettingsConfigDict
+import jwt
 # import secrets
 
 router = APIRouter(prefix="/auth")
@@ -51,6 +53,24 @@ def get_users_by_login(login: str) -> tuple:
             return (0,)
 
 
+class Settings(BaseSettings):
+    TESTMESSAGE: str
+    private_key: str
+    public_key: str
+    algorithm: str
+
+    model_config = SettingsConfigDict(
+        env_file="somedata.env", env_file_encoding="utf-8"
+    )
+
+
+settings = Settings()  # type: ignore
+
+ntplib_client = ntplib.NTPClient()
+response = ntplib_client.request("ru.pool.ntp.org", version=4)
+utc_time = datetime.datetime.fromtimestamp(response.tx_time, tz=datetime.timezone.utc)
+
+
 @router.put("/sign_in")
 def sign_in(login: str, password: str):
 
@@ -88,7 +108,30 @@ def sign_in(login: str, password: str):
         login_check(login, data)
         and password_check(password, data[2], try_count=3) is True
     ):  # data[2] это индекс в кортеже где находится хэш пароля
-        return {"Authorization": "Bearer x", "bool": True}
+        JWT_token = jwt.encode(
+            {
+                "payload": {
+                    "login": login,
+                    "role": "user",
+                    "exp": str(
+                        datetime.datetime.fromtimestamp(
+                            response.tx_time
+                            + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
+                            tz=datetime.timezone.utc,
+                        )
+                    ),
+                }
+            },
+            settings.private_key,
+            settings.algorithm,
+        )  # settings.private_key это приватный ключ, JWT-токен обычно живет 15-60 минут, но для упрощения на данный момент сделаем 24 часа, позже вернем на 15 мин и сделаю refresh token.
+        # settings.algorithm это алгоритм кодирования записанный в .env файле
+
+        return {
+            "message": "Успешный вход",
+            "Authorization": f"Bearer {JWT_token}",
+            "bool": True,
+        }
     else:
         return {
             "message": "Неправильный логин и/или пароль.\n1. Повторить попытку.\n2. Зарегистрироваться.",
@@ -109,12 +152,6 @@ def sign_up():
         global login
         login = input("Введите желаемый логин: ")
         if is_login_available(login):
-            ntplib_client = ntplib.NTPClient()
-            response = ntplib_client.request("ru.pool.ntp.org", version=4)
-            utc_time = datetime.datetime.fromtimestamp(
-                response.tx_time, tz=datetime.timezone.utc
-            )
-
             with sqlite3.connect(USERS_DB_NAME) as users:
                 password = input("Введите желаемый пароль: ")
                 cursor = users.cursor()
