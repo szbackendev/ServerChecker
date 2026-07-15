@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 import jwt
 # import secrets
 
-router = APIRouter(prefix="/auth")
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
 USERS_DB_NAME = "users.sqlite3"
 
@@ -19,8 +19,6 @@ with sqlite3.connect(USERS_DB_NAME) as users:
                    login TEXT NOT NULL UNIQUE,
                    password_hash TEXT NOT NULL,
                    role TEXT NOT NULL,
-                   session_token TEXT,
-                   session_token_expiration_date TEXT,
                    reg_date TEXT NOT NULL,
                    comment TEXT
                    )""")
@@ -28,13 +26,11 @@ with sqlite3.connect(USERS_DB_NAME) as users:
     cursor.execute("SELECT COUNT(*) FROM Users")
     if cursor.fetchone()[0] == 0:
         cursor.execute(
-            "INSERT INTO Users (login, password_hash, role, session_token, session_token_expiration_date, reg_date, comment) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO Users (login, password_hash, role, reg_date, comment) VALUES (?, ?, ?, ?, ?)",
             (
                 "login0",
                 "password_hash0",
                 "user",
-                "session_token0",
-                "yyyy-mm-dd",
                 "yyyy-mm-dd",
                 "Template",
             ),
@@ -139,8 +135,8 @@ def sign_in(login: str, password: str):
         }  # ведем на регистрацию, где логин будет .lower().strip()
 
 
-def sign_up():
-    print("\nРегистрация:")
+@router.put("/sign_up")
+def sign_up(login: str, password: str):
 
     def is_login_available(login) -> bool:
         data = get_users_by_login(login)
@@ -148,34 +144,47 @@ def sign_up():
             return False
         return True
 
-    while True:
-        global login
-        login = input("Введите желаемый логин: ")
-        if is_login_available(login):
-            with sqlite3.connect(USERS_DB_NAME) as users:
-                password = input("Введите желаемый пароль: ")
-                cursor = users.cursor()
-                cursor.execute(
-                    "INSERT INTO Users (login, password_hash, role, session_token, session_token_expiration_date, reg_date, comment) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    (
-                        login,
-                        argon2.PasswordHasher().hash(password),
-                        "user",
-                        None,
-                        None,
-                        str(utc_time)[:11],  # дата регистрации в формате yyyy-mm-dd
-                        None,
+    if is_login_available(login):
+        with sqlite3.connect(USERS_DB_NAME) as users:
+            cursor = users.cursor()
+            cursor.execute(
+                "INSERT INTO Users (login, password_hash, role, reg_date, comment) VALUES (?, ?, ?, ?, ?)",
+                (
+                    login,
+                    argon2.PasswordHasher().hash(password),
+                    "user",
+                    str(utc_time)[:11],  # дата регистрации в формате yyyy-mm-dd
+                    None,
+                ),
+            )
+            users.commit()
+
+        JWT_token = jwt.encode(
+            {
+                "payload": {
+                    "login": login,
+                    "role": "user",
+                    "exp": str(
+                        datetime.datetime.fromtimestamp(
+                            response.tx_time
+                            + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
+                            tz=datetime.timezone.utc,
+                        )
                     ),
-                )
-                users.commit()
-            return True
+                }
+            },
+            settings.private_key,
+            settings.algorithm,
+        )  # settings.private_key это приватный ключ, JWT-токен обычно живет 15-60 минут, но для упрощения на данный момент сделаем 24 часа, позже вернем на 15 мин и сделаю refresh token.
+        # settings.algorithm это алгоритм кодирования записанный в .env файле
 
-        else:
-            print("Указаный логин занят.")
-            continue
-
-    # Пароль и сохранение его в хэше в users.json в словарик [login]["password_hash"]
-    # Также выдача временного session_token и много еще чего.
+        return {
+            "message": "Успешная регистрация",
+            "Authorization": f"Bearer {JWT_token}",
+            "bool": True,
+        }
+    else:
+        return {"message": "Логин занят", "bool": False}
 
 
 def reset_password():
