@@ -56,15 +56,14 @@ class Settings(BaseSettings):
     algorithm: str
 
     model_config = SettingsConfigDict(
-        env_file="somedata.env", env_file_encoding="utf-8"
+        env_file="somedata.env",  # если другое название файла окружения, то изменить somedata.env на ваше имяфайла.env
+        env_file_encoding="utf-8",
     )
 
 
 settings = Settings()  # type: ignore
 
 ntplib_client = ntplib.NTPClient()
-response = ntplib_client.request("ru.pool.ntp.org", version=4)
-utc_time = datetime.datetime.fromtimestamp(response.tx_time, tz=datetime.timezone.utc)
 
 
 @router.put("/sign_in")
@@ -104,6 +103,8 @@ def sign_in(login: str, password: str):
         login_check(login, data)
         and password_check(password, data[2], try_count=3) is True
     ):  # data[2] это индекс в кортеже где находится хэш пароля
+        response = ntplib_client.request("pool.ntp.org", version=4)
+
         JWT_token = jwt.encode(
             {
                 "payload": {
@@ -145,6 +146,11 @@ def sign_up(login: str, password: str):
         return True
 
     if is_login_available(login):
+        response = ntplib_client.request("pool.ntp.org", version=4)
+        utc_time = datetime.datetime.fromtimestamp(
+            response.tx_time, tz=datetime.timezone.utc
+        )
+
         with sqlite3.connect(USERS_DB_NAME) as users:
             cursor = users.cursor()
             cursor.execute(
