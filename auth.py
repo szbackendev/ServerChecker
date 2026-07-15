@@ -4,6 +4,7 @@ import ntplib
 import datetime
 from fastapi import APIRouter
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel
 import jwt
 # import secrets
 
@@ -63,11 +64,20 @@ class Settings(BaseSettings):
 
 settings = Settings()  # type: ignore
 
+
+class UserAuthSchema(BaseModel):
+    login: str
+    password: str
+
+
 ntplib_client = ntplib.NTPClient()
 
 
-@router.put("/sign_in")
-def sign_in(login: str, password: str):
+@router.post("/sign_in")
+def sign_in(userdata: UserAuthSchema):
+
+    login = userdata.login.lower().strip()
+    password = userdata.password
 
     def login_check(login: str, data: tuple) -> bool:
         login = login.strip().lower()
@@ -107,17 +117,10 @@ def sign_in(login: str, password: str):
 
         JWT_token = jwt.encode(
             {
-                "payload": {
-                    "login": login,
-                    "role": "user",
-                    "exp": str(
-                        datetime.datetime.fromtimestamp(
-                            response.tx_time
-                            + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
-                            tz=datetime.timezone.utc,
-                        )
-                    ),
-                }
+                "login": login,
+                "role": "user",
+                "exp": int(response.tx_time)
+                + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
             },
             settings.private_key,
             settings.algorithm,
@@ -136,8 +139,11 @@ def sign_in(login: str, password: str):
         }  # ведем на регистрацию, где логин будет .lower().strip()
 
 
-@router.put("/sign_up")
-def sign_up(login: str, password: str):
+@router.post("/sign_up")
+def sign_up(userdata: UserAuthSchema):
+
+    login = userdata.login.strip().lower()
+    password = userdata.password
 
     def is_login_available(login) -> bool:
         data = get_users_by_login(login)
@@ -167,17 +173,10 @@ def sign_up(login: str, password: str):
 
         JWT_token = jwt.encode(
             {
-                "payload": {
-                    "login": login,
-                    "role": "user",
-                    "exp": str(
-                        datetime.datetime.fromtimestamp(
-                            response.tx_time
-                            + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
-                            tz=datetime.timezone.utc,
-                        )
-                    ),
-                }
+                "login": login,
+                "role": "user",
+                "exp": int(response.tx_time)
+                + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
             },
             settings.private_key,
             settings.algorithm,
