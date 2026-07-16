@@ -46,15 +46,18 @@ def funcs_choice() -> None:
     return None
 
 
+JWT_token = str()
+
+
 @routerips.get("/get_JWT_token", description="get JWT-token from cookie")
 def get_JWT_token(cookies: str = Cookie(default=None, alias="Authorization")):
+    global JWT_token
+    JWT_token = cookies
     return {"JWT-token": cookies}
 
 
 def get_user_id():
     # логин по идее должен браться из JWT-токена, который есть в куки
-
-    JWT_token = get_JWT_token()["JWT-token"]
 
     sub = jwt.decode(
         jwt=JWT_token,
@@ -71,10 +74,8 @@ def get_user_id():
     return user_id
 
 
-@routerips.get("/")
-def prev_IPs() -> (
-    str | list
-):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
+@routerips.get("/get_ips")
+def prev_IPs():  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
 
     user_id = get_user_id()
 
@@ -86,7 +87,7 @@ def prev_IPs() -> (
                        WHERE type = 'table' AND name = 'known_IPs'
                        )""")
         if cursor.fetchone()[0] == 0:
-            return "Список предыдущих IP-адресов пуст."
+            return {"message": "Список предыдущих IP-адресов пуст."}
         else:
             cursor.execute(
                 """SELECT ip FROM known_IPs WHERE user_id = ? ORDER BY id DESC""",
@@ -95,10 +96,10 @@ def prev_IPs() -> (
             ips = cursor.fetchall()
 
             if len(ips) == 0:
-                return "Список предыдущих IP-адресов пуст."
+                return {"message": "Список предыдущих IP-адресов пуст."}
             else:
                 list_of_ips = list(ip[0] for ip in ips)
-                return list_of_ips
+                return {"IPs": list_of_ips}
 
     # with open(FILE_NAME, mode="a+", encoding="utf-8") as file:
     #     file.seek(0)
