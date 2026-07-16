@@ -126,7 +126,14 @@ def sign_in(userdata: UserAuthSchema, response: Response):
             settings.algorithm,
         )  # settings.private_key это приватный ключ, JWT-токен обычно живет 15-60 минут, но для упрощения на данный момент сделаем 24 часа, позже вернем на 15 мин и сделаю refresh token.
         # settings.algorithm это алгоритм кодирования записанный в .env файле
-        response.set_cookie("Authorization", f"Bearer {JWT_token}")
+
+        response.set_cookie(
+            key="Authorization",
+            value=JWT_token,
+            max_age=86400,
+            httponly=True,
+            secure=False,  # позже поставить True, когда сайт будет на https://
+        )
 
         return {
             "message": "Успешный вход",
@@ -136,7 +143,7 @@ def sign_in(userdata: UserAuthSchema, response: Response):
         return {
             "message": "Неправильный логин и/или пароль.\n1. Повторить попытку.\n2. Зарегистрироваться.",
             "bool": False,
-        }  # ведем на регистрацию, где логин будет .lower().strip()
+        }
 
 
 @routerauth.post("/sign_up")
@@ -186,7 +193,13 @@ def sign_up(userdata: UserAuthSchema, response: Response):
         )  # settings.private_key это приватный ключ, JWT-токен обычно живет 15-60 минут, но для упрощения на данный момент сделаем 24 часа, позже вернем на 15 мин и сделаю refresh token.
         # settings.algorithm это алгоритм кодирования записанный в .env файле
 
-        response.set_cookie("Authorization", f"Bearer {JWT_token}")
+        response.set_cookie(
+            key="Authorization",
+            value=JWT_token,
+            max_age=86400,
+            httponly=True,
+            secure=False,  # позже поставить True, когда сайт будет на https://
+        )
 
         return {
             "message": "Успешная регистрация",

@@ -1,9 +1,10 @@
 # from re import search as re_search
 from re import match as re_match
 from ping_utils import manual_ping
-from auth import USERS_DB_NAME
+from auth import USERS_DB_NAME, settings
 import sqlite3
-from fastapi import APIRouter
+from fastapi import APIRouter, Cookie
+import jwt
 
 routerips = APIRouter(prefix="/ips", tags=["IPs"])
 
@@ -45,15 +46,24 @@ def funcs_choice() -> None:
     return None
 
 
-def get_user_id():
-    from auth import get_users_by_login
-    # логин по идее должен браться из JWT-токена, который есть в куки или в localstorage
+@routerips.get("/get_JWT_token", description="get JWT-token from cookie")
+def get_JWT_token(cookies: str = Cookie(default=None, alias="Authorization")):
+    return {"JWT-token": cookies}
 
-    user_id = get_users_by_login(
-        rawlogin
-    )[
-        0
-    ]  # если len(get_users_by_login(rawlogin)) = 1, то там пустой кортеж без инфы о юзере
+
+def get_user_id():
+    # логин по идее должен браться из JWT-токена, который есть в куки
+
+    JWT_token = get_JWT_token()["JWT-token"]
+
+    sub = jwt.decode(
+        jwt=JWT_token,
+        key=settings.public_key,
+        algorithms=settings.algorithm,
+        verify=True,
+    )["sub"]
+
+    user_id = sub
 
     if user_id == 0:
         raise ValueError("user_id не найден в БД !")
