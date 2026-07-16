@@ -1,12 +1,14 @@
 import uvicorn
 from fastapi import FastAPI
-from auth import router
+from auth import routerauth as authrouter
+from ip_handler import routerips as ipsrouter
 # from auth import sign_in, sign_up
 # from ip_handler import funcs_choice
 
 
 app = FastAPI()
-app.include_router(router)
+app.include_router(authrouter)
+app.include_router(ipsrouter)
 
 
 @app.get("/")

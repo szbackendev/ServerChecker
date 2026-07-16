@@ -3,6 +3,9 @@ from re import match as re_match
 from ping_utils import manual_ping
 from auth import USERS_DB_NAME
 import sqlite3
+from fastapi import APIRouter
+
+routerips = APIRouter(prefix="/ips", tags=["IPs"])
 
 
 DEF_SERVER_IP = "1.1.1.1"
@@ -43,7 +46,8 @@ def funcs_choice() -> None:
 
 
 def get_user_id():
-    from auth import login as rawlogin, get_users_by_login
+    from auth import get_users_by_login
+    # логин по идее должен браться из JWT-токена, который есть в куки или в localstorage
 
     user_id = get_users_by_login(
         rawlogin
@@ -57,6 +61,7 @@ def get_user_id():
     return user_id
 
 
+@routerips.get("/")
 def prev_IPs() -> (
     str | list
 ):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.

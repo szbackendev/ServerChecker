@@ -8,7 +8,7 @@ from pydantic import BaseModel
 import jwt
 # import secrets
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+routerauth = APIRouter(prefix="/auth", tags=["Auth"])
 
 USERS_DB_NAME = "users.sqlite3"
 
@@ -73,7 +73,7 @@ class UserAuthSchema(BaseModel):
 ntplib_client = ntplib.NTPClient()
 
 
-@router.post("/sign_in")
+@routerauth.post("/sign_in")
 def sign_in(userdata: UserAuthSchema):
 
     login = userdata.login.lower().strip()
@@ -117,7 +117,7 @@ def sign_in(userdata: UserAuthSchema):
 
         JWT_token = jwt.encode(
             {
-                "login": login,
+                "sub": str(data[0]),  # data[0] это id пользователя в БД
                 "role": "user",
                 "exp": int(response.tx_time)
                 + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
@@ -139,13 +139,16 @@ def sign_in(userdata: UserAuthSchema):
         }  # ведем на регистрацию, где логин будет .lower().strip()
 
 
-@router.post("/sign_up")
+@routerauth.post("/sign_up")
 def sign_up(userdata: UserAuthSchema):
 
     login = userdata.login.strip().lower()
     password = userdata.password
 
+    data = str()
+
     def is_login_available(login) -> bool:
+        nonlocal data
         data = get_users_by_login(login)
         if len(data) > 1:
             return False
@@ -173,7 +176,7 @@ def sign_up(userdata: UserAuthSchema):
 
         JWT_token = jwt.encode(
             {
-                "login": login,
+                "sub": str(data[0]),  # data[0] это id пользователя в БД
                 "role": "user",
                 "exp": int(response.tx_time)
                 + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
