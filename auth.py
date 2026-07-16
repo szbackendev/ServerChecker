@@ -2,7 +2,7 @@ import argon2
 import sqlite3
 import ntplib
 import datetime
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel
 import jwt
@@ -74,7 +74,7 @@ ntplib_client = ntplib.NTPClient()
 
 
 @routerauth.post("/sign_in")
-def sign_in(userdata: UserAuthSchema):
+def sign_in(userdata: UserAuthSchema, response: Response):
 
     login = userdata.login.lower().strip()
     password = userdata.password
@@ -113,23 +113,23 @@ def sign_in(userdata: UserAuthSchema):
         login_check(login, data)
         and password_check(password, data[2], try_count=3) is True
     ):  # data[2] это индекс в кортеже где находится хэш пароля
-        response = ntplib_client.request("pool.ntp.org", version=4)
+        ntp_response = ntplib_client.request("pool.ntp.org", version=4)
 
         JWT_token = jwt.encode(
             {
                 "sub": str(data[0]),  # data[0] это id пользователя в БД
                 "role": "user",
-                "exp": int(response.tx_time)
+                "exp": int(ntp_response.tx_time)
                 + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
             },
             settings.private_key,
             settings.algorithm,
         )  # settings.private_key это приватный ключ, JWT-токен обычно живет 15-60 минут, но для упрощения на данный момент сделаем 24 часа, позже вернем на 15 мин и сделаю refresh token.
         # settings.algorithm это алгоритм кодирования записанный в .env файле
+        response.set_cookie("Authorization", f"Bearer {JWT_token}")
 
         return {
             "message": "Успешный вход",
-            "Authorization": f"Bearer {JWT_token}",
             "bool": True,
         }
     else:
@@ -140,7 +140,7 @@ def sign_in(userdata: UserAuthSchema):
 
 
 @routerauth.post("/sign_up")
-def sign_up(userdata: UserAuthSchema):
+def sign_up(userdata: UserAuthSchema, response: Response):
 
     login = userdata.login.strip().lower()
     password = userdata.password
@@ -155,9 +155,9 @@ def sign_up(userdata: UserAuthSchema):
         return True
 
     if is_login_available(login):
-        response = ntplib_client.request("pool.ntp.org", version=4)
+        ntp_response = ntplib_client.request("pool.ntp.org", version=4)
         utc_time = datetime.datetime.fromtimestamp(
-            response.tx_time, tz=datetime.timezone.utc
+            ntp_response.tx_time, tz=datetime.timezone.utc
         )
 
         with sqlite3.connect(USERS_DB_NAME) as users:
@@ -178,7 +178,7 @@ def sign_up(userdata: UserAuthSchema):
             {
                 "sub": str(data[0]),  # data[0] это id пользователя в БД
                 "role": "user",
-                "exp": int(response.tx_time)
+                "exp": int(ntp_response.tx_time)
                 + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
             },
             settings.private_key,
@@ -186,9 +186,10 @@ def sign_up(userdata: UserAuthSchema):
         )  # settings.private_key это приватный ключ, JWT-токен обычно живет 15-60 минут, но для упрощения на данный момент сделаем 24 часа, позже вернем на 15 мин и сделаю refresh token.
         # settings.algorithm это алгоритм кодирования записанный в .env файле
 
+        response.set_cookie("Authorization", f"Bearer {JWT_token}")
+
         return {
             "message": "Успешная регистрация",
-            "Authorization": f"Bearer {JWT_token}",
             "bool": True,
         }
     else:
