@@ -22,8 +22,7 @@ def get_user_id(
     # логин по идее должен браться из JWT-токена, который есть в куки
 
     if auth_cookie is None:
-        # return 0
-        return auth_cookie
+        return 0
 
     user_id = jwt.decode(
         jwt=auth_cookie,
@@ -39,6 +38,9 @@ def get_user_id(
 def prev_IPs(
     user_id: Annotated[str, Depends(get_user_id)],
 ):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
+
+    if user_id == "0":
+        return {"message": "Ошибка во взятии user_id из payload JWT-токена"}
 
     with sqlite3.connect(USERS_DB_NAME) as users:
         cursor = users.cursor()
@@ -68,10 +70,8 @@ def new_IP(
     user_id: Annotated[str, Depends(get_user_id)], user_ip: str
 ) -> dict:  # должна возвращать новый IP-адрес и записывать его в known_IPs.txt
 
-    return {"data": user_id}
-
     if user_id == "0":
-        return {"message": "user_id не найден в БД !"}
+        return {"message": "Ошибка во взятии user_id из payload JWT-токена"}
 
     if not re_match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", user_ip):
         return {"message": "Введенная строка не является IP-адресом. Формат: X.X.X.X"}
@@ -100,8 +100,11 @@ def new_IP(
             )
 
         users.commit()
-    return {"new_ip": user_ip, "user_id": user_id}
+    return {
+        "message": f"Успешно добавлен IP-адрес: {user_ip}",
+        "new_ip": user_ip,
+    }
 
 
-def ip_choice():  # должен вернуть IP-адрес
-    pass  # на сайте пользователь сам будет тыкать что-то на интерфейсе что вызовет либо new_ip, либо prev_ips
+def ip_choice():
+    pass  # на сайте пользователь сам будет тыкать что-то на интерфейсе что вызовет либо new_ip, либо prev_ips, пока не уверен нужна функция или нет

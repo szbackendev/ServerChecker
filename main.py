@@ -2,8 +2,6 @@ import uvicorn
 from fastapi import FastAPI
 from auth import routerauth as authrouter
 from ip_handler import routerips as ipsrouter
-# from auth import sign_in, sign_up
-# from ip_handler import funcs_choice
 
 
 app = FastAPI()

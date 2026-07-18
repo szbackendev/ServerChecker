@@ -1,6 +1,8 @@
 from subprocess import run as subprocess_run
 import re
-# from re import search as re_search
+
+
+# функции в доработке на след. этапах проекта
 
 
 def ping(server_ip, packet_size=32, count=4) -> float:
