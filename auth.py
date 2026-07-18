@@ -181,6 +181,10 @@ def sign_up(userdata: UserAuthSchema, response: Response):
             )
             users.commit()
 
+        data = get_users_by_login(login)
+        if len(data) <= 1:
+            return {"message": "Не удалось получить данные по логину из БД"}
+
         JWT_token = jwt.encode(
             {
                 "sub": str(data[0]),  # data[0] это id пользователя в БД
