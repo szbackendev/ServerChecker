@@ -1,6 +1,7 @@
 # from re import search as re_search
 from re import match as re_match
-from auth import USERS_DB_NAME, settings
+from auth import USERS_DB_NAME
+from settings import settings
 import sqlite3
 from fastapi import APIRouter, Cookie, Depends
 from typing import Annotated
@@ -34,7 +35,7 @@ def get_user_id(
     return user_id
 
 
-@routerips.get("/get_ips")
+@routerips.get("/get_ips", description="user access")
 def prev_IPs(
     user_id: Annotated[str, Depends(get_user_id)],
 ):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
@@ -65,7 +66,7 @@ def prev_IPs(
                 return {"IPs": list_of_ips}
 
 
-@routerips.post("/new_ip")
+@routerips.post("/new_ip", description="user access")
 def new_IP(
     user_id: Annotated[str, Depends(get_user_id)], user_ip: str
 ) -> dict:  # должна возвращать новый IP-адрес и записывать его в known_IPs.txt

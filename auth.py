@@ -3,10 +3,9 @@ import sqlite3
 import ntplib
 import datetime
 from fastapi import APIRouter, Response
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from settings import settings
 from pydantic import BaseModel
 import jwt
-# import secrets
 
 routerauth = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -50,21 +49,6 @@ def get_users_by_login(login: str) -> tuple:
             return (0,)
 
 
-class Settings(BaseSettings):
-    TESTMESSAGE: str
-    private_key: str
-    public_key: str
-    algorithm: str
-
-    model_config = SettingsConfigDict(
-        env_file="somedata.env",  # если другое название файла окружения, то изменить somedata.env на ваше имяфайла.env
-        env_file_encoding="utf-8",
-    )
-
-
-settings = Settings()  # type: ignore
-
-
 class UserAuthSchema(BaseModel):
     login: str
     password: str
@@ -73,7 +57,7 @@ class UserAuthSchema(BaseModel):
 ntplib_client = ntplib.NTPClient()
 
 
-@routerauth.post("/sign_in")
+@routerauth.post("/sign_in", description="user access")
 def sign_in(userdata: UserAuthSchema, response: Response):
 
     login = userdata.login.lower().strip()
@@ -119,6 +103,7 @@ def sign_in(userdata: UserAuthSchema, response: Response):
             {
                 "sub": str(data[0]),  # data[0] это id пользователя в БД
                 "role": "user",
+                "logged": True,
                 "exp": int(ntp_response.tx_time)
                 + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
             },
@@ -146,7 +131,7 @@ def sign_in(userdata: UserAuthSchema, response: Response):
         }
 
 
-@routerauth.post("/sign_up")
+@routerauth.post("/sign_up", description="user access")
 def sign_up(userdata: UserAuthSchema, response: Response):
 
     login = userdata.login.strip().lower()
@@ -189,6 +174,7 @@ def sign_up(userdata: UserAuthSchema, response: Response):
             {
                 "sub": str(data[0]),  # data[0] это id пользователя в БД
                 "role": "user",
+                "logged": True,
                 "exp": int(ntp_response.tx_time)
                 + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
             },
@@ -211,7 +197,3 @@ def sign_up(userdata: UserAuthSchema, response: Response):
         }
     else:
         return {"message": "Логин занят", "bool": False}
-
-
-def reset_password():
-    pass  # доделать функцию сброса пароля
