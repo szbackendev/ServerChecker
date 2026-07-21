@@ -9,7 +9,7 @@ import jwt
 
 routerauth = APIRouter(prefix="/auth", tags=["Auth"])
 
-USERS_DB_NAME = "users.sqlite3"
+USERS_DB_NAME = settings.USERS_DB_NAME
 
 # Создаем БД users если еще не создана и суем туда Template
 with sqlite3.connect(USERS_DB_NAME) as users:

@@ -1,6 +1,5 @@
 # from re import search as re_search
 from re import match as re_match
-from auth import USERS_DB_NAME
 from settings import settings
 import sqlite3
 from fastapi import APIRouter, Cookie, Depends
@@ -11,6 +10,7 @@ routerips = APIRouter(prefix="/ips", tags=["IPs"])
 
 
 DEF_SERVER_IP = "1.1.1.1"
+USERS_DB_NAME = settings.USERS_DB_NAME
 
 
 def funcs_choice():

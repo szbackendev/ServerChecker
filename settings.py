@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     algorithm: str
     access_key: str
     admin_panel_url: str
+    USERS_DB_NAME: str
 
     model_config = SettingsConfigDict(
         env_file="somedata.env",  # если другое название файла окружения, то изменить somedata.env на ваше имяфайла.env
