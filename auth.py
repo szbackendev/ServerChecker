@@ -147,10 +147,17 @@ def sign_up(userdata: UserAuthSchema, response: Response):
         return True
 
     if is_login_available(login):
-        ntp_response = ntplib_client.request("pool.ntp.org", version=4)
+        try:
+            ntp_response = ntplib_client.request("pool.ntp.org", version=4)
+        except ntplib.NTPException:
+            return {
+                "message": "Ошибка с соединением к pool.ntp.org серверу",
+                "bool": False,
+            }
+
         utc_time = datetime.datetime.fromtimestamp(
             ntp_response.tx_time, tz=datetime.timezone.utc
-        )
+        ).strftime("%Y-%m-%d")
 
         with sqlite3.connect(USERS_DB_NAME) as users:
             cursor = users.cursor()
@@ -160,7 +167,7 @@ def sign_up(userdata: UserAuthSchema, response: Response):
                     login,
                     argon2.PasswordHasher().hash(password),
                     "user",
-                    str(utc_time)[:11],  # дата регистрации в формате yyyy-mm-dd
+                    utc_time,  # дата регистрации в формате yyyy-mm-dd
                     None,
                 ),
             )

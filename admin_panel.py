@@ -9,6 +9,7 @@ import secrets
 import string
 import sqlite3
 import argon2
+import datetime
 
 # import datetime
 
@@ -23,15 +24,21 @@ current_admins = {"2": "admin"}  # id: login
 USERS_DB_NAME = settings.USERS_DB_NAME
 
 
-class AdminPanelSchema(BaseModel):
-    user_login: str
+class AdminLoginSchema(BaseModel):
     access_key: str
+
+
+class PasswordResetSchema(BaseModel):
+    user_login: str
+
+
+class NTP_Server_Schema(BaseModel):
     ntp_pool: str = Field(
         default="pool.ntp.org", pattern=r"\S*.?pool\.ntp\.org$"
     )  # сделать валидацию по формату pool.ntp.org и/или *.pool.ntp.org
 
 
-def get_tx_time(ntp_url: AdminPanelSchema | None = None):
+def get_tx_time(ntp_url: NTP_Server_Schema | None = None):
     if ntp_url is None:
         tx_time = ntplib.NTPClient().request(host="pool.ntp.org", version=4).tx_time
     else:
@@ -69,7 +76,7 @@ def message(
 @routeradmin.post("/sign_in", description="admin access")
 def admin_sign_in(
     response: Response,
-    admin_data: AdminPanelSchema,
+    admin_data: AdminLoginSchema,
     auth_cookie: Annotated[str | None, Cookie(alias="Authorization")] = None,
 ):
 
@@ -125,7 +132,7 @@ def admin_sign_in(
 
 @routeradmin.put("/user_reset_password")
 def user_reset_password(
-    userdata: AdminPanelSchema,
+    userdata: PasswordResetSchema,
     admin_auth_cookie: Annotated[str | None, Cookie(alias="admin_access")] = None,
 ):
 
@@ -189,10 +196,12 @@ def user_reset_password(
             verify=True,
         )
 
+        current_tx_time = get_tx_time()
+
         if (
             payload["role"] == "admin"
             and payload["sub"] in current_admins.keys()
-            and payload["exp"] > int(get_tx_time())
+            and payload["exp"] > int(current_tx_time)
         ):
             new_password = generate_password()
 
@@ -200,9 +209,14 @@ def user_reset_password(
                 with sqlite3.connect(USERS_DB_NAME) as users:
                     cursor = users.cursor()
                     cursor.execute(
-                        "UPDATE Users SET password_hash = ? WHERE login = ?",
-                        (argon2.PasswordHasher().hash(new_password), user[1]),
+                        "UPDATE Users SET password_hash = ?, comment = ? WHERE login = ?",
+                        (
+                            argon2.PasswordHasher().hash(new_password),
+                            f"Password changed at {datetime.datetime.fromtimestamp(current_tx_time, tz=datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')} by {payload['sub']}",
+                            user[1],
+                        ),
                     )
+
                     users.commit()
                 return {
                     "message": "Password changed to new",
