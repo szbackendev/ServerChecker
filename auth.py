@@ -151,7 +151,7 @@ def sign_up(userdata: UserAuthSchema, response: Response):
             ntp_response = ntplib_client.request("pool.ntp.org", version=4)
         except ntplib.NTPException:
             return {
-                "message": "Ошибка с соединением к pool.ntp.org серверу",
+                "message": "Error connecting to pool.ntp.org server",
                 "bool": False,
             }
 
