@@ -1,9 +1,9 @@
 import uvicorn
 from fastapi import FastAPI
+
+from admin_panel import routeradmin as adminrouter
 from auth import routerauth as authrouter
 from ip_handler import routerips as ipsrouter
-from admin_panel import routeradmin as adminrouter
-
 
 app = FastAPI()
 app.include_router(authrouter)

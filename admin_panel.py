@@ -1,15 +1,17 @@
-from fastapi import APIRouter, Cookie, Response
+import datetime
+import secrets
+import sqlite3
+import string
 from typing import Annotated
-from settings import settings
-from auth import get_users_by_login
-from pydantic import BaseModel, Field
+
+import argon2
 import jwt
 import ntplib
-import secrets
-import string
-import sqlite3
-import argon2
-import datetime
+from fastapi import APIRouter, Cookie, Response
+from pydantic import BaseModel, Field
+
+from auth import get_users_by_login
+from settings import settings
 
 # import datetime
 
@@ -71,14 +73,7 @@ class AdminCookieCheck:
         except ntplib.NTPException:
             return False
 
-        if (
-            payload["role"] == "admin"
-            and payload["sub"] in current_admins.keys()
-            and payload["exp"] > tx_time
-        ):
-            return True
-        else:
-            return False
+        return bool(payload["role"] == "admin" and payload["sub"] in current_admins and payload["exp"] > tx_time)
 
     def detailed(self, admin_auth_cookie) -> dict:
 
@@ -99,7 +94,7 @@ class AdminCookieCheck:
 
         if (
             payload["role"] == "admin"
-            and payload["sub"] in current_admins.keys()
+            and payload["sub"] in current_admins
             and payload["exp"] > tx_time
         ):
             return {
@@ -124,7 +119,7 @@ def message(
     if ACC.boolean(admin_auth_cookie):
         return {"message": "Hello World!"}
     else:
-        return {"message": "Access denied."}  # 121
+        return {"message": "Access denied."}
 
 
 @routeradmin.post("/sign_in", description="admin access")
@@ -204,8 +199,8 @@ def user_reset_password(
                 range(16, 25)
             )  # выбираем рандомную длину с 16 по 24
 
-        new_password = str()
-        text = str()
+        new_password = ""
+        text = ""
         ambiguous_characters = "il1Lo0O"
 
         if uppercase:
