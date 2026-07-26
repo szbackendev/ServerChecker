@@ -1,10 +1,12 @@
 # from re import search as re_search
-from re import match as re_match
-from settings import settings
 import sqlite3
-from fastapi import APIRouter, Cookie, Depends
+from re import match as re_match
 from typing import Annotated
+
 import jwt
+from fastapi import APIRouter, Cookie, Depends
+
+from settings import settings
 
 routerips = APIRouter(prefix="/ips", tags=["IPs"])
 
@@ -62,7 +64,7 @@ def prev_IPs(
             if len(ips) == 0:
                 return {"message": "Список предыдущих IP-адресов пуст."}
             else:
-                list_of_ips = list(ip[0] for ip in ips)
+                list_of_ips = [ip[0] for ip in ips]
                 return {"IPs": list_of_ips}
 
 

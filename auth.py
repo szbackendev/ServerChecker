@@ -1,11 +1,13 @@
-import argon2
-import sqlite3
-import ntplib
 import datetime
-from fastapi import APIRouter, Response
-from settings import settings
-from pydantic import BaseModel
+import sqlite3
+
+import argon2
 import jwt
+import ntplib
+from fastapi import APIRouter, Response
+from pydantic import BaseModel
+
+from settings import settings
 
 routerauth = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -137,14 +139,12 @@ def sign_up(userdata: UserAuthSchema, response: Response):
     login = userdata.login.strip().lower()
     password = userdata.password
 
-    data = str()
+    data = ""
 
     def is_login_available(login) -> bool:
         nonlocal data
         data = get_users_by_login(login)
-        if len(data) > 1:
-            return False
-        return True
+        return not len(data) > 1
 
     if is_login_available(login):
         try:

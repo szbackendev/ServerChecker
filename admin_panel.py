@@ -8,7 +8,7 @@ import argon2
 import jwt
 import ntplib
 from fastapi import APIRouter, Cookie, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 
 from auth import get_users_by_login
 from settings import settings
@@ -31,7 +31,9 @@ class AdminLoginSchema(BaseModel):
 
 
 class UserDataSchema(BaseModel):
-    user_login: str
+    user_login: Annotated[
+        str, StringConstraints(to_lower=True, strip_whitespace=True)
+    ] = ""
 
 
 class NTP_Server_Schema(BaseModel):
@@ -73,7 +75,11 @@ class AdminCookieCheck:
         except ntplib.NTPException:
             return False
 
-        return bool(payload["role"] == "admin" and payload["sub"] in current_admins and payload["exp"] > tx_time)
+        return bool(
+            payload["role"] == "admin"
+            and payload["sub"] in current_admins
+            and payload["exp"] > tx_time
+        )
 
     def detailed(self, admin_auth_cookie) -> dict:
 
@@ -267,7 +273,9 @@ def user_reset_password(
             return {"message": "Error with checking admin rights"}
 
 
-@routeradmin.get("/get_all_users")
+@routeradmin.get(
+    "/get_all_users"
+)  # ручка для получения пользователей, но без sensitive data
 def get_all_users(
     admin_auth_cookie: Annotated[str | None, Cookie(alias="admin_access")] = None,
 ) -> list | bool:
@@ -275,7 +283,7 @@ def get_all_users(
         with sqlite3.connect(USERS_DB_NAME) as users:
             cursor = users.cursor()
 
-            cursor.execute("SELECT * FROM Users")
+            cursor.execute("SELECT id, login, role, reg_date FROM Users")
 
             all_users = cursor.fetchall()
 
@@ -284,7 +292,7 @@ def get_all_users(
         return False
 
 
-@routeradmin.delete("/delete_user")
+@routeradmin.delete("/delete_user")  # и его IP-адреса из known_IPs
 def delete_user(
     userdata: UserDataSchema,
     admin_auth_cookie: Annotated[str | None, Cookie(alias="admin_access")] = None,
@@ -293,11 +301,30 @@ def delete_user(
         with sqlite3.connect(USERS_DB_NAME) as users:
             cursor = users.cursor()
 
-            cursor.execute("DELETE FROM Users WHERE login = ?", (userdata.user_login,))
+            cursor.execute(
+                "SELECT id FROM Users WHERE login = ?",
+                (userdata.user_login,),
+            )
 
-            users.commit()
-        return {
-            "message": f"user with login '{userdata.user_login}' successfuly deleted"
-        }
+            user_id = cursor.fetchone()
+            if user_id is not None:
+                user_id = user_id[0]
+
+                cursor.execute("DELETE FROM known_IPs WHERE user_id = ?", (user_id,))
+
+                cursor.execute(
+                    "DELETE FROM Users WHERE login = ?", (userdata.user_login,)
+                )
+
+                users.commit()
+
+        if user_id is not None:
+            return {
+                "message": f"user with login '{userdata.user_login}' successfuly deleted"
+            }
+        else:
+            return {
+                "message": f"Couldn't find user with '{userdata.user_login}' login in database"
+            }
     else:
         return {"message": "Error"}
