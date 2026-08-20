@@ -1,6 +1,5 @@
-from subprocess import run as subprocess_run
 import re
-
+from subprocess import run as subprocess_run
 
 # функции в доработке на след. этапах проекта
 
@@ -13,6 +12,7 @@ def ping(server_ip, packet_size=32, count=4) -> float:
         capture_output=True,
         text=True,
         encoding="UTF-8",
+        check=True,
     ).stdout
 
     pattern = re.compile(r"(\d+\.\d+)/(\d+\.\d+)/(\d+\.\d+)/(\d+\.\d+)")
