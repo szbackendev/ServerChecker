@@ -1,27 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <title>AdminPanel</title>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta name="robots" content="index,follow"/>
-  <meta name="generator" content="GrapesJS Studio"/>
-  <style data-project-fonts="true">
-@font-face {
-      font-family: Inter;
-      src: url('https://fonts.gstatic.com/s/inter/v20/UcCo3FwrK3iLTfvgaQc78lA2.woff2');
-      font-weight: 100 900;
-    }
-  
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="index,follow" />
+    
+    <style data-project-fonts="true">
+      @font-face {
+        font-family: Inter;
+        src: url("https://fonts.gstatic.com/s/inter/v20/UcCo3FwrK3iLTfvgaQc78lA2.woff2");
+        font-weight: 100 900;
+      }
 
-    @font-face {
-      font-family: Inter;
-      src: url('https://fonts.gstatic.com/s/inter/v20/UcCm3FwrK3iLTcvnYwYZ90A2B58.woff2');
-      font-style: italic;
-font-weight: 100 900;
-    }
-</style>
-  <link rel="stylesheet" href="./style.css">
+      @font-face {
+        font-family: Inter;
+        src: url("https://fonts.gstatic.com/s/inter/v20/UcCm3FwrK3iLTcvnYwYZ90A2B58.woff2");
+        font-style: italic;
+        font-weight: 100 900;
+      }
+    </style>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body id="izur"><div id="ivvii">Please enter the access key</div><input type="password" id="i7zjx" placeholder="Waiting for access key..."/><button type="submit" id="io68o">Verify</button></body>
+  <body id="izur">
+    <div id="accesskeytext">Please enter the access key</div>
+    <input
+      type="password"
+      id="accesskeyinput"
+      placeholder="Waiting for access key..."
+    /><button type="submit" id="accesskeybutton">Verify</button>
+  </body>
 </html>
