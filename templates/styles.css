@@ -68,18 +68,18 @@ html {
   margin-bottom: 0px;
   margin-left: 0px;
 }
-#iotdu {
+#login_label {
   font-size: 16px;
   position: relative;
   left: 22%;
 }
-#i6m4h {
+#password_label {
   font-family: Inter;
   font-size: 16px;
   position: relative;
   left: 22%;
 }
-#iydpj {
+#login_button {
   font-family: Inter;
   border-top-color: rgb(0, 0, 0);
   border-right-color: rgb(0, 0, 0);
@@ -107,7 +107,7 @@ html {
   position: relative;
   left: 22%;
 }
-#il0ui {
+#login_text_div {
   padding-top: 10px;
   padding-right: 10px;
   padding-bottom: 10px;
@@ -126,7 +126,7 @@ html {
   font-size: 18px;
   line-height: 1.15px;
 }
-#i5b1h {
+#login_input {
   width: 22vw;
   height: 4vh;
   font-family: Inter;
@@ -154,7 +154,7 @@ html {
   margin-bottom: 10px;
   margin-top: 5px;
 }
-#ihjve {
+#password_input {
   height: 4vh;
   font-family: Inter;
   border-top-left-radius: 4px;
@@ -179,17 +179,17 @@ html {
   position: relative;
   left: 22%;
 }
-#iglh2 {
+#login_label_div {
   font-family: Inter;
 }
-#i16si {
+#password_label_div {
   position: relative;
 }
-#iewdz {
+#login_button_div {
   position: relative;
   top: 15px;
 }
-#il0ui-2 {
+#register_form_div {
   padding-top: 10px;
   padding-right: 10px;
   padding-bottom: 10px;
@@ -208,15 +208,15 @@ html {
   font-size: 18px;
   line-height: 1.15px;
 }
-#ir2f1g {
+#register_login_label {
   font-size: 16px;
   position: relative;
   left: 22%;
 }
-#iwodrc {
+#register_login_div {
   font-family: Inter;
 }
-#i5b1h-2 {
+#register_login_input {
   width: 22vw;
   height: 4vh;
   font-family: Inter;
@@ -244,16 +244,16 @@ html {
   margin-bottom: 10px;
   margin-top: 5px;
 }
-#imegow {
+#register_password_label {
   font-family: Inter;
   font-size: 16px;
   position: relative;
   left: 22%;
 }
-#ik3rmh {
+#register_password_div {
   position: relative;
 }
-#ihjve-2 {
+#register_password_input {
   height: 4vh;
   font-family: Inter;
   border-top-left-radius: 4px;
@@ -278,7 +278,7 @@ html {
   position: relative;
   left: 22%;
 }
-#iydpj-2 {
+#register_button {
   font-family: Inter;
   border-top-color: rgb(0, 0, 0);
   border-right-color: rgb(0, 0, 0);
@@ -306,11 +306,11 @@ html {
   position: relative;
   left: 22%;
 }
-#i75umm {
+#register_button_div {
   position: relative;
   top: 15px;
 }
-#ic74mi {
+#register_form {
   display: block;
   justify-content: center;
   align-items: center;
@@ -328,10 +328,10 @@ html {
   margin-bottom: 0px;
   margin-left: 0px;
 }
-#registerbody {
+#register_body {
   font-family: Inter;
 }
-#accesskeytext {
+#access_key_text {
   padding: 10px;
   position: relative;
   top: 38vh;
@@ -342,7 +342,7 @@ html {
   font-size: 18px;
   line-height: 1.15px;
 }
-#accesskeyinput {
+#access_key_input {
   position: relative;
   top: 40vh;
   left: 38vw;
@@ -365,7 +365,7 @@ html {
   border-bottom-left-radius: 4px;
   height: 3vh;
 }
-#accesskeybutton {
+#access_key_button {
   font-family: Inter;
   border-top-color: rgb(0, 0, 0);
   border-right-color: rgb(0, 0, 0);
@@ -392,7 +392,7 @@ html {
   top: 44vh;
   left: 14vw;
 }
-#helloadmintext {
+#hello_admin_text {
   padding: 10px;
   font-family: Inter;
   width: 20vw;
@@ -400,7 +400,7 @@ html {
   left: 40vw;
   text-align: center;
 }
-#adminpanelbody {
+#admin_panel_body {
   font-family: Inter;
 }
 #get_test_message_button {
@@ -457,11 +457,11 @@ html {
 .flex-column {
   flex-grow: 1;
 }
-#i3u1yl {
+#column1 {
   flex-basis: 50%;
   height: 55vh;
 }
-#ixxaxg {
+#get_all_users_area {
   flex-basis: 50%;
   height: 90vh;
 }
@@ -470,7 +470,7 @@ html {
   align-items: stretch;
   flex-wrap: nowrap;
 }
-#i4nusa-2 {
+#delete_usr_login_textarea {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -493,7 +493,7 @@ html {
   top: 24vh;
   left: 18vw;
 }
-#ige2y-2 {
+#usr_reset_pswd_btn {
   font-family: Inter;
   border-top-color: rgb(0, 0, 0);
   border-right-color: rgb(0, 0, 0);
@@ -521,7 +521,7 @@ html {
   left: 18vw;
   display: block;
 }
-#iwl3pz {
+#delete_user_label {
   width: 16vw;
   position: relative;
   top: 26vh;
@@ -534,7 +534,7 @@ html {
   opacity: 0%;
   transition: opacity 1s ease 0s;
 }
-#i4nusa-2-2 {
+#usr_reset_pswd_login_textarea {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -557,7 +557,7 @@ html {
   top: 18vh;
   left: 18vw;
 }
-#iwl3pz-2 {
+#usr_reset_pswd_label_textarea {
   width: 16vw;
   position: relative;
   top: 20vh;
@@ -570,7 +570,7 @@ html {
   opacity: 0%;
   transition: opacity 1s ease 0s;
 }
-#ige2y-2-2 {
+#delete_usr_btn {
   font-family: Inter;
   border-top-color: rgb(0, 0, 0);
   border-right-color: rgb(0, 0, 0);

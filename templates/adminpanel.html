@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="robots" content="index,follow" />
-    
+
     <style data-project-fonts="true">
       @font-face {
         font-family: Inter;
@@ -22,49 +22,61 @@
     </style>
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body id="adminpanelbody">
-    <div title="" id="helloadmintext">Welcome to admin panel!</div>
+  <body id="admin_panel_body">
+    <div title="" id="hello_admin_text">Welcome to admin panel!</div>
     <div data-type-role="flex-row" id="indl6s" class="flex-row">
-      <div data-type-role="flex-column" id="i3u1yl" class="flex-column">
-        <textarea name="GetTestMessageArea" id="get_test_message_area"></textarea
-        ><button type="button" id="get_test_message_button" name="GetTestMessageButton">
+      <div data-type-role="flex-column" id="column1" class="flex-column">
+        <textarea
+          name="GetTestMessageArea"
+          id="get_test_message_area"
+        ></textarea
+        ><button
+          type="button"
+          id="get_test_message_button"
+          name="GetTestMessageButton"
+        >
           Get test message</button
         ><textarea
           name="UserResetPasswordLoginArea"
           placeholder="Waiting for user's login..."
           required
-          id="i4nusa-2-2"
+          id="usr_reset_pswd_login_textarea"
         ></textarea
         ><label
           for=""
           name="UserResetPasswordLabelInfo"
           customattributes="[object Object]"
-          id="iwl3pz-2"
+          id="usr_reset_pswd_label_textarea"
           >Label</label
         ><button
           type="button"
           name="UserResetPasswordButton"
           customattributes="[object Object]"
-          id="ige2y-2"
+          id="usr_reset_pswd_btn"
         >
           Reset password</button
         ><textarea
           name="DeleteUserLoginArea"
           placeholder="Waiting for user's login..."
           required
-          id="i4nusa-2"
-        ></textarea
-        ><label for="" id="iwl3pz" name="DeleteUserLabelInfo">Label</label
+          id="delete_usr_login_textarea"
+        >
+        </textarea>
+        <label for="" id="delete_user_label" name="DeleteUserLabelInfo">Label</label
         ><button
           type="button"
           name="DeleteUserButton"
           customattributes="[object Object]"
-          id="ige2y-2-2"
+          id="delete_usr_btn"
         >
           Delete User
         </button>
       </div>
-      <div data-type-role="flex-column" id="ixxaxg" class="flex-column">
+      <div
+        data-type-role="flex-column"
+        id="get_all_users_area"
+        class="flex-column"
+      >
         <button
           type="button"
           name="GetAllUsersButton"
