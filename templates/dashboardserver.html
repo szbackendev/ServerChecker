@@ -22,11 +22,11 @@
     </style>
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body id="i0qf">
-    <div data-type-role="flex-row" id="i7xgagk-2" class="flex-row">
-      <div data-type-role="flex-column" id="i1enofj-2" class="flex-column">
-        <a href="./index.html" id="iztqhkl-2-2" class="link-box"
-          ><div data-type-icon="" id="i3ez8bx-2" class="icon">
+  <body id="server_body">
+    <div data-type-role="flex-row" id="whole_content_dashboardserver" class="flex-row">
+      <div data-type-role="flex-column" id="sidebar_dashboardserver" class="flex-column">
+        <a href="./index.html" id="dashboardserver_link_to_index" class="link-box"
+          ><div data-type-icon="" id="dashboardserver_link_to_index_div" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
@@ -34,17 +34,17 @@
               ></path>
             </svg></div
         ></a>
-        <div id="iijetoq-2" class="divider"></div>
-        <a href="./dashboardserver.html" id="iztqhkl-4" class="link-box"
-          ><div data-type-icon="" id="ik3rn78-2" class="icon">
+        <div id="divider_dashboardserver" class="divider"></div>
+        <a href="./dashboardserver.html" id="dashboardserver_link_to_dashboardserver" class="link-box"
+          ><div data-type-icon="" id="server_icon_div_dashboardserver" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
                 d="M20 13H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2m-5 5h-2v-2h2zm4 0h-2v-2h2zm1-15H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 5h-2V6h2zm4 0h-2V6h2z"
               ></path>
             </svg></div></a
-        ><a href="./dashboardtg.html" id="iztqhkl-3-2" class="link-box"
-          ><div data-type-icon="" id="ivo8bt6-2" class="icon">
+        ><a href="./dashboardtg.html" id="dashboard_link_to_tg" class="link-box"
+          ><div data-type-icon="" id="tg_icon_div_dashboardserver" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 fill="currentColor"
@@ -53,106 +53,98 @@
             </svg></div
         ></a>
       </div>
-      <div data-type-role="flex-column" id="i1enofj-2-2" class="flex-column">
-        <section id="iq97eo" class="section">
-          <div id="i4buen" class="container">
-            <select type="text" id="iofzex" required>
-              <option value="opt1" id="iw5k6">
+      <div data-type-role="flex-column" id="main_content_dashboardserver" class="flex-column">
+        <section id="main_content_section_server" class="section">
+          <div id="ip_choicer_div_server" class="container">
+            <select type="text" id="ip_choicer_server" required>
+              <option value="opt1" id="1st_option">
                 🔴 | IP: xxx.xxx.xxx | 📶 xxx ms
               </option>
-              <option value="opt2" id="inrw9">
+              <option value="opt2" id="2nd_option">
                 🟢 | IP: xxx.xxx.xxx | 📶 xxx ms
               </option>
-              <option value="opt3" id="i175g">
+              <option value="opt3" id="3rd_option">
                 🔴 | IP: xxx.xxx.xxx | 📶 xxx ms
               </option>
-              <option value="opt4" id="ifruy">
+              <option value="opt4" id="4th_option">
                 🟢 | IP: xxx.xxx.xxx | 📶 xxx ms
               </option>
-              <option value="opt5" id="imtbi">
+              <option value="opt5" id="5th_option">
                 🔴 | IP: xxx.xxx.xxx | 📶 xxx ms
               </option>
-              <option value="opt6" id="iu5ih">Add new IP</option>
+              <option value="opt6" id="6th_option">Add new IP</option>
             </select>
           </div>
-          <div id="i4bubn" class="container">
-            <span id="ilgush"
+          <div id="ip_choicer_div2_server" class="container">
+            <span id="stopped_service_text"
               >🔴 | Service “ServerCheckerService” is not running</span
-            ><button type="button" id="ihqxsk">Install</button>
-            <div id="ig7bwx">is service already installed?</div>
+            ><button type="button" id="install_btn_server">Install</button>
+            <div id="undr_btn_text_server">is service already installed?</div>
           </div>
-          <div id="ii503n" class="container">
-            <div id="ig9grq">
-              <div id="i6pv9c">
-                <button type="button" id="ia6zr2">Ping</button
-                ><button type="button" id="i6v3la">
-                  <div data-type-icon="" id="ikaevx" class="icon">
+          <div id="funcs_div_server" class="container">
+            <div id="ping_func_div_server">
+              <div id="ping_btns">
+                <button type="button" id="ping_btn">Ping</button
+                ><button type="button" id="ping_settings_btn">
+                  <div data-type-icon="" id="ping_settings_icon_div" class="icon">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 16 16"
-                      id="icu9d9"
                     >
                       <path
                         fill="currentColor"
                         d="M2.267 6.153A6 6 0 0 1 3.53 3.98a.36.36 0 0 1 .382-.095l1.36.484a.71.71 0 0 0 .935-.538l.26-1.416a.35.35 0 0 1 .274-.282a6.1 6.1 0 0 1 2.52 0c.14.03.248.141.274.282l.26 1.416a.708.708 0 0 0 .935.538l1.36-.484a.36.36 0 0 1 .382.095a6 6 0 0 1 1.262 2.173a.35.35 0 0 1-.108.378l-1.102.931a.703.703 0 0 0 0 1.076l1.102.931c.11.093.152.242.108.378a6 6 0 0 1-1.262 2.173a.36.36 0 0 1-.382.095l-1.36-.484a.71.71 0 0 0-.935.538l-.26 1.416a.35.35 0 0 1-.275.282a6.1 6.1 0 0 1-2.519 0a.35.35 0 0 1-.275-.282l-.259-1.416a.708.708 0 0 0-.935-.538l-1.36.484a.36.36 0 0 1-.382-.095a6 6 0 0 1-1.262-2.173a.35.35 0 0 1 .108-.378l1.102-.931a.704.704 0 0 0 0-1.076l-1.102-.931a.35.35 0 0 1-.108-.378M6.25 8a1.75 1.75 0 1 0 3.5 0a1.75 1.75 0 0 0-3.5 0"
-                        id="i83ouv"
                       ></path>
                     </svg>
                   </div></button
-                ><button type="button" id="i6v4la">
-                  <div data-type-icon="" id="ikaevz" class="icon">
+                ><button type="button" id="ping_date_choicer_btn">
+                  <div data-type-icon="" id="ping_date_choicer_icon_div" class="icon">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
-                      id="ialuvf"
                     >
                       <path
                         fill="currentColor"
                         d="m11.164 20.998l.356-1.423c.162-.648.497-1.24.97-1.712l5.901-5.901a3.28 3.28 0 0 1 2.607-.95V8.5H3v9.249a3.25 3.25 0 0 0 3.25 3.25zM6 16.25a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m4.75 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0M6 11.75a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m4.75 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0m4.75 0a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0M17.749 3a3.25 3.25 0 0 1 3.25 3.25V7H3v-.75A3.25 3.25 0 0 1 6.25 3zm-4.552 15.57l5.901-5.901a2.286 2.286 0 0 1 3.233 3.232l-5.902 5.902a2.7 2.7 0 0 1-1.248.706l-1.83.458a1.087 1.087 0 0 1-1.318-1.319l.457-1.83c.118-.472.362-.903.707-1.248"
-                        id="ivg5zk"
                       ></path>
                     </svg>
                   </div>
                 </button>
               </div>
-              <div id="iq981z">
+              <div id="ping_summ_info_text">
                 “Summary information about the specified settings”
               </div>
-              <div id="ityg1l">
-                <button type="button" id="irpbmm">Confirm</button
-                ><button type="button" id="ipkehf">Deny</button>
+              <div id="ping_confirm_deny_btns">
+                <button type="button" id="ping_confirm_btn">Confirm</button
+                ><button type="button" id="ping_deny_btn">Deny</button>
               </div>
             </div>
-            <div id="itb7i4">
-              <button type="button" id="iiz8u9">Speedtest</button>
-              <div id="iunpzu">
-                <div id="iwbdh6">
-                  <div id="ihb0k2">
-                    <div data-type-icon="" id="i72koa" class="icon">
+            <div id="speedtest_func_div_server">
+              <button type="button" id="speedtest_btn">Speedtest</button>
+              <div id="speedtest_download_div">
+                  <div id="speedtest_download_text_div">
+                    <div data-type-icon="" id="speedtest_dwnarrow_icon_div" class="icon">
                       <svg
                         width="8"
                         height="11"
                         viewBox="0 0 8 11"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        id="io8b8h"
                       >
                         <path
                           d="M3.18201 0.5C3.18201 0.223858 3.40586 0 3.68201 0C3.95815 0 4.18201 0.223858 4.18201 0.5L3.68201 0.5H3.18201ZM4.03556 10.8536C3.8403 11.0488 3.52372 11.0488 3.32845 10.8536L0.146473 7.67157C-0.0487893 7.47631 -0.0487893 7.15973 0.146473 6.96447C0.341735 6.7692 0.658318 6.7692 0.85358 6.96447L3.68201 9.79289L6.51043 6.96447C6.7057 6.7692 7.02228 6.7692 7.21754 6.96447C7.4128 7.15973 7.4128 7.47631 7.21754 7.67157L4.03556 10.8536ZM3.68201 0.5L4.18201 0.5L4.18201 10.5H3.68201H3.18201L3.18201 0.5H3.68201Z"
                           fill="black"
-                          id="ixfbsh"
                         ></path>
                       </svg>
                     </div>
                     {xxx} mbit\s
                   </div>
-                </div>
-                <div id="i9zqw2"></div>
+                
+                <div id="speedtest_download_bar"></div>
               </div>
-              <div id="isn4dh">
-                <div id="ioe8e9">
-                  <div id="iwokvv">
-                    <div data-type-icon="" id="iomzv4" class="icon">
+              <div id="speedtest_upload_div">
+                  <div id="speedtest_upload_text_div">
+                    <div data-type-icon="" id="speedtest_uparrow_icon_div" class="icon">
                       <svg
                         width="8"
                         height="11"
@@ -168,36 +160,30 @@
                     </div>
                     {xxx} mbit\s
                   </div>
-                </div>
-                <div id="i7tmnh"></div>
+                <div id="speedtest_upload_bar"></div>
               </div>
             </div>
-            <div id="i68lp1">
-              <span id="ijncks">check accessibility to domains</span
-              ><span id="i9hs6o">{CurrentDomain} is accessible!</span
+            <div id="accessibility_func_div_server">
+              <span id="accessibility_func_name_text">check accessibility to domains</span
+              ><span id="accessibility_success_text">{CurrentDomain} is accessible!</span
               ><input
                 type="text"
-                id="i3ztk5"
+                id="accessibility_input_domain"
                 placeholder="Waiting for your domain.com"
                 required
-              /><button type="submit" id="i0umfg">Check</button>
+              /><button type="submit" id="accessibility_check_btn">Check</button>
             </div>
-            <div id="iaf40m">
-              <span id="ildlg7">Get the server lease expiration date</span
-              ><span id="iajc3h"
-                ><span id="ixnq2e"
-                  >Failed to get server lease expiration date.</span
-                ><br />Please write the date yourself and it will be saved for
-                future requests.
-              </span>
-              <div id="ig5248">
-                <input type="text" id="i1ab6g" required /><input
+            <div id="exp_date_func_div_server">
+              <span id="exp_date_func_name_text">Get the server lease expiration date</span>
+              <p id="exp_date_failed_get_date_texts">Failed to get server lease expiration date.<br>Please write the date yourself and it will be saved for future requests.</p>
+              <div id="exp_date_input_dates">
+                <input type="text" id="exp_date_input_day" required /><input
                   type="text"
-                  id="imo1rk"
+                  id="exp_date_input_month"
                   required
-                /><input type="text" id="i0xn0p" required />
+                /><input type="text" id="exp_date_input_year" required />
               </div>
-              <button type="submit" id="i70i1c">Save</button>
+              <button type="submit" id="exp_date_save_btn">Save</button>
             </div>
           </div>
         </section>
