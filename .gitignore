@@ -6,3 +6,5 @@ test.py
 .continue
 users.json
 somedata.env
+.db
+.sqlite3

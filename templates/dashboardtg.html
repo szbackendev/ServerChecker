@@ -20,12 +20,12 @@
         font-weight: 100 900;
       }
     </style>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
   </head>
   <body id="tg_body">
     <div data-type-role="flex-row" id="whole_content_tg" class="flex-row">
       <div data-type-role="flex-column" id="sidebar_tg" class="flex-column">
-        <a href="./index.html" id="tg_link_to_index" class="link-box"
+        <a href="./user" id="tg_link_to_index" class="link-box"
           ><div data-type-icon="" id="index_icon_div_tg" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
@@ -35,7 +35,7 @@
             </svg></div
         ></a>
         <div id="divider_tg" class="divider"></div>
-        <a href="./dashboardserver.html" id="tg_link_to_server" class="link-box"
+        <a href="./dashboard_server" id="tg_link_to_server" class="link-box"
           ><div data-type-icon="" id="server_icon_div_tg" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
@@ -43,7 +43,7 @@
                 d="M20 13H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2m-5 5h-2v-2h2zm4 0h-2v-2h2zm1-15H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 5h-2V6h2zm4 0h-2V6h2z"
               ></path>
             </svg></div></a
-        ><a href="./dashboardtg.html" id="tg_link_to_tg" class="link-box"
+        ><a href="./tg_connect" id="tg_link_to_tg" class="link-box"
           ><div data-type-icon="" id="tg_icon_div_tg" class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path

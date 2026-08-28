@@ -1,25 +1,18 @@
 import uvicorn
-from fastapi import FastAPI
-from jinja2 import Environment, FileSystemLoader
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 
 from admin_panel import routeradmin as adminrouter
 from auth import routerauth as authrouter
 from ip_handler import routerips as ipsrouter
+from webpages import router_pages as pages_router
 
 app = FastAPI()
 app.include_router(authrouter)
 app.include_router(ipsrouter)
 app.include_router(adminrouter)
-
-
-# Инициализируем среду с помощью загрузчика каталогов
-# Это говорит Jinja2 искать шаблоны в папке templates
-env = Environment(
-    loader=FileSystemLoader('templates'),
-    autoescape=True,
-    trim_blocks=True,
-    lstrip_blocks=True
-)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.include_router(pages_router)
 
 def start():
     uvicorn.run(
