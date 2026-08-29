@@ -1,83 +1,49 @@
 <!doctype html>
 <html>
-  <head>
-    <title>DashboardUser</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="robots" content="index,follow" />
-    
-    <style data-project-fonts="true">
-      @font-face {
-        font-family: Inter;
-        src: url("https://fonts.gstatic.com/s/inter/v20/UcCo3FwrK3iLTfvgaQc78lA2.woff2");
-        font-weight: 100 900;
-      }
-
-      @font-face {
-        font-family: Inter;
-        src: url("https://fonts.gstatic.com/s/inter/v20/UcCm3FwrK3iLTcvnYwYZ90A2B58.woff2");
-        font-style: italic;
-        font-weight: 100 900;
-      }
-    </style>
-    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
-  </head>
-  <body id="index_body" class="wrap">
-    <div data-type-role="flex-row" id="whole_content_index" class="flex-row">
-      <div data-type-role="flex-column" id="sidebar_index" class="flex-column">
-        <a href="./user" id="index_link_to_index" class="link-box"
-          ><div data-type-icon="" id="index_link_to_index_div" class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                fill="currentColor"
-                d="M12 2a5 5 0 1 0 0 10a5 5 0 1 0 0-10M4 22h16c.55 0 1-.45 1-1v-1c0-3.86-3.14-7-7-7h-4c-3.86 0-7 3.14-7 7v1c0 .55.45 1 1 1"
-              ></path>
-            </svg></div
-        ></a>
-        <div id="divider_index" class="divider"></div>
-        <a href="./dashboard_server" id="link_to_dashboard_index" class="link-box"
-          ><div data-type-icon="" id="dashboardserver_icon_div_index" class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                fill="currentColor"
-                d="M20 13H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2m-5 5h-2v-2h2zm4 0h-2v-2h2zm1-15H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 5h-2V6h2zm4 0h-2V6h2z"
-              ></path>
-            </svg></div></a
-        ><a href="./tg_connect" id="link_to_tg_index" class="link-box"
-          ><div data-type-icon="" id="tg_icon_div_index" class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                fill="currentColor"
-                d="M20.56 3.17c-.29-.2-.67-.23-.99-.08l-17 8.01c-.36.17-.58.53-.57.92c0 .39.24.75.6.9l3.36 1.47L16 8l-7 8v6l5.46-3.9l4.14 1.81c.13.06.26.08.4.08c.18 0 .36-.05.52-.15a.99.99 0 0 0 .48-.79l1-15c.02-.35-.14-.69-.43-.89Z"
-              ></path>
-            </svg></div
-        ></a>
-      </div>
-      <div data-type-role="flex-column" id="main_content_index" class="flex-column">
-        <h1 id="hello_usr_text">Hello, {username}</h1>
-        <button type="button" customattributes="" id="change_pswd_btn">
-          Change password
-        </button>
-        <div id="old_pswd_div_index">
-          <label id="label_old_pswd">Write your old password here.</label
-          ><input
-            type="password"
-            id="input_old_pswd"
-            required
-            placeholder="Waiting for OLD password..."
-          />
+    <head>
+        <title>DashboardUser</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <meta name="robots" content="index,follow"/>
+        <style data-project-fonts="true">@font-face { font-family: Inter; src: url("https://fonts.gstatic.com/s/inter/v20/UcCo3FwrK3iLTfvgaQc78lA2.woff2"); font-weight: 100 900; } @font-face { font-family: Inter; src: url("https://fonts.gstatic.com/s/inter/v20/UcCm3FwrK3iLTcvnYwYZ90A2B58.woff2"); font-style: italic; font-weight: 100 900; }</style>
+        <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}"/>
+        <link href="../static/styles.css" rel="stylesheet" type="text/css">
+    </head>
+    <body id="index_body" class="wrap">
+        <div data-type-role="flex-row" id="whole_content_index" class="flex-row">
+            <div data-type-role="flex-column" id="sidebar_index" class="flex-column">
+                <a href="./user" id="index_link_to_index" class="link-box"><div data-type-icon="" id="index_link_to_index_div" class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M12 2a5 5 0 1 0 0 10a5 5 0 1 0 0-10M4 22h16c.55 0 1-.45 1-1v-1c0-3.86-3.14-7-7-7h-4c-3.86 0-7 3.14-7 7v1c0 .55.45 1 1 1"></path>
+                        </svg>
+                    </div></a>
+                <div id="divider_index" class="divider"></div>
+                <a href="./dashboard_server" id="link_to_dashboard_index" class="link-box"><div data-type-icon="" id="dashboardserver_icon_div_index" class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M20 13H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2m-5 5h-2v-2h2zm4 0h-2v-2h2zm1-15H4c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 5h-2V6h2zm4 0h-2V6h2z"></path>
+                        </svg>
+                    </div></a>
+                <a href="./tg_connect" id="link_to_tg_index" class="link-box"><div data-type-icon="" id="tg_icon_div_index" class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M20.56 3.17c-.29-.2-.67-.23-.99-.08l-17 8.01c-.36.17-.58.53-.57.92c0 .39.24.75.6.9l3.36 1.47L16 8l-7 8v6l5.46-3.9l4.14 1.81c.13.06.26.08.4.08c.18 0 .36-.05.52-.15a.99.99 0 0 0 .48-.79l1-15c.02-.35-.14-.69-.43-.89Z"></path>
+                        </svg>
+                    </div></a>
+            </div>
+            <div data-type-role="flex-column" id="main_content_index" class="flex-column">
+                <h1 id="hello_usr_text">Hello, {username}</h1>
+                <button type="button" customattributes="" id="change_pswd_btn">
+                    Change password
+</button>
+                <div id="old_pswd_div_index">
+                    <label id="label_old_pswd">Write your old password here.</label>
+                    <input type="password" id="input_old_pswd" required placeholder="Waiting for OLD password..."/>
+                </div>
+                <div id="new_pswd_div_index">
+                    <label id="label_new_pswd">Write your new password here.</label>
+                    <input type="password" id="input_new_pswd" required placeholder="Waiting for NEW password..."/>
+                </div>
+                <button type="submit" id="confirm_reset_pswd_btn">Confirm changing</button>
+            </div>
         </div>
-        <div id="new_pswd_div_index">
-          <label id="label_new_pswd">Write your new password here.</label
-          ><input
-            type="password"
-            id="input_new_pswd"
-            required
-            placeholder="Waiting for NEW password..."
-          />
-        </div>
-        <button type="submit" id="confirm_reset_pswd_btn">Confirm changing</button>
-      </div>
-    </div>
-  </body>
+    </body>
 </html>

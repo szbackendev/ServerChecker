@@ -8,3 +8,6 @@ users.json
 somedata.env
 .db
 .sqlite3
+_pg*
+{{*
+pinegrow*

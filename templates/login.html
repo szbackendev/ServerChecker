@@ -1,47 +1,28 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Login</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="robots" content="index,follow" />
-    
-    <style data-project-fonts="true">
-      @font-face {
-        font-family: Inter;
-        src: url("https://fonts.gstatic.com/s/inter/v20/UcCo3FwrK3iLTfvgaQc78lA2.woff2");
-        font-weight: 100 900;
-      }
-
-      @font-face {
-        font-family: Inter;
-        src: url("https://fonts.gstatic.com/s/inter/v20/UcCm3FwrK3iLTcvnYwYZ90A2B58.woff2");
-        font-style: italic;
-        font-weight: 100 900;
-      }
-    </style>
-    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
-  </head>
-  <body id="login_body">
-    <div id="login_text_div">Login Form</div>
-    <form method="get" id="login_form">
-      <div id="login_label_div"><label id="login_label">Login</label></div>
-      <input
-        type="text"
-        placeholder="Waiting for login..."
-        required
-        name="login_placeholder"
-        id="login_input"
-      />
-      <div id="password_label_div"><label id="password_label">Password</label></div>
-      <input
-        type="password"
-        required
-        placeholder="Type your password here..."
-        name="password_placeholder"
-        id="password_input"
-      />
-      <div id="login_button_div"><button type="submit" id="login_button">Login</button></div>
-    </form>
-  </body>
+    <head>
+        <title>Login</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,initial-scale=1"/>
+        <meta name="robots" content="index,follow"/>
+        <style data-project-fonts="true">@font-face { font-family: Inter; src: url("https://fonts.gstatic.com/s/inter/v20/UcCo3FwrK3iLTfvgaQc78lA2.woff2"); font-weight: 100 900; } @font-face { font-family: Inter; src: url("https://fonts.gstatic.com/s/inter/v20/UcCm3FwrK3iLTcvnYwYZ90A2B58.woff2"); font-style: italic; font-weight: 100 900; }</style>
+        <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}"/>
+        <link href="../static/styles.css" rel="stylesheet" type="text/css">
+    </head>
+    <body id="login_body">
+        <div id="login_text_div">Login Form</div>
+        <form method="get" id="login_form">
+            <div id="login_label_div">
+                <label id="login_label">Login</label>
+            </div>
+            <input type="text" placeholder="Waiting for login..." required name="login_placeholder" id="login_input"/>
+            <div id="password_label_div">
+                <label id="password_label">Password</label>
+            </div>
+            <input type="password" required placeholder="Type your password here..." name="password_placeholder" id="password_input"/>
+            <div id="login_button_div">
+                <button type="submit" id="login_button">Login</button>
+            </div>
+        </form>
+    </body>
 </html>
