@@ -9,11 +9,11 @@ router_pages = APIRouter(tags=["Frontend pages"])
 def user_dashboard(request: Request):
     return templates.TemplateResponse(request=request, name="dashboarduser.html")
 
-@router_pages.get(f"{settings.admin_panel_url}/admin_login")
+@router_pages.get(f"/{settings.admin_panel_url}/admin_login")
 def admin_login(request: Request):
     return templates.TemplateResponse(request=request, name="adminlogin.html")
 
-@router_pages.get(f"{settings.admin_panel_url}/admin_panel")
+@router_pages.get(f"/{settings.admin_panel_url}/admin_panel")
 def admin_panel(request: Request):
     return templates.TemplateResponse(request=request, name="adminpanel.html")
 
