@@ -116,13 +116,16 @@
                         </div>
                         <div id="exp_date_func_div_server">
                             <span id="exp_date_func_name_text">Get the server lease expiration date</span>
-                            <p id="exp_date_failed_get_date_texts">Failed to get server lease expiration date.<br>Please write the date yourself and it will be saved for future requests.</p>
+                            <p id="exp_date_info_texts">Failed to get server lease expiration date.<br>Please write the date yourself and it will be saved for future requests.</p>
                             <div id="exp_date_input_dates">
                                 <input type="text" id="exp_date_input_day" required/>
                                 <input type="text" id="exp_date_input_month" required/>
                                 <input type="text" id="exp_date_input_year" required/>
                             </div>
-                            <button type="submit" id="exp_date_save_btn">Save</button>
+                            <button type="submit" id="exp_date_save_btn">
+                                <span class="btn-text-get">Get</span>
+                                <span class="btn-text-save">Save</span>
+                            </button>
                         </div>
                     </div>
                 </section>
