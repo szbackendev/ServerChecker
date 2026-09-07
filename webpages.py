@@ -29,10 +29,10 @@ def dashboard_tg(request: Request):
 def docs(request: Request):
     return templates.TemplateResponse(request=request, name="docs.html")
 
-@router_pages.get("/sign_in")
+@router_pages.get("/login")
 def user_sign_in(request: Request):
     return templates.TemplateResponse(request=request, name="login.html")
 
-@router_pages.get("/sign_up")
+@router_pages.get("/register")
 def user_sign_up(request: Request):
     return templates.TemplateResponse(request=request, name="register.html")

@@ -10,15 +10,15 @@
     </head>
     <body id="login_body">
         <div id="login_text_div">Login Form</div>
-        <form method="get" id="login_form">
+        <form action="/auth/sign_in" method="post" id="login_form">
             <div id="login_label_div">
                 <label id="login_label">Login</label>
             </div>
-            <input type="text" placeholder="Waiting for login..." required name="login_placeholder" id="login_input"/>
+            <input type="text" placeholder="Waiting for login..." required name="login_placeholder" id="{% if error %}login_input_error{% else %}login_input{% endif %}", value="{{ login_var or '' }}"/>
             <div id="password_label_div">
                 <label id="password_label">Password</label>
             </div>
-            <input type="password" required placeholder="Type your password here..." name="password_placeholder" id="password_input"/>
+            <input type="password" required placeholder="Type your password here..." name="password_placeholder" id="{% if error %}password_input_error{% else %}password_input{% endif %}"/>
             <div id="login_button_div">
                 <button type="submit" id="login_button">Login</button>
             </div>

@@ -1,13 +1,16 @@
 import datetime
 import sqlite3
+from typing import Annotated
 
 import argon2
 import jwt
 import ntplib
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Form, Response, status, Request
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 from settings import settings
+from templates_config import templates
 
 routerauth = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -52,15 +55,15 @@ def get_users_by_login(login: str) -> tuple:
 
 
 class UserAuthSchema(BaseModel):
-    login: str
-    password: str
+    login: str = Form(alias="login_placeholder")
+    password: str = Form(alias="password_placeholder")
 
 
 ntplib_client = ntplib.NTPClient()
 
 
 @routerauth.post("/sign_in", description="user access")
-def sign_in(userdata: UserAuthSchema, response: Response):
+def sign_in(request: Request, userdata: Annotated[UserAuthSchema, Form()], response: Response):
 
     login = userdata.login.lower().strip()
     password = userdata.password
@@ -114,6 +117,8 @@ def sign_in(userdata: UserAuthSchema, response: Response):
         )  # settings.private_key это приватный ключ, JWT-токен обычно живет 15-60 минут, но для упрощения на данный момент сделаем 24 часа, позже вернем на 15 мин и сделаю refresh token.
         # settings.algorithm это алгоритм кодирования записанный в .env файле
 
+        response = RedirectResponse(url="/user", status_code=status.HTTP_303_SEE_OTHER)   
+
         response.set_cookie(
             key="Authorization",
             value=JWT_token,
@@ -122,15 +127,15 @@ def sign_in(userdata: UserAuthSchema, response: Response):
             secure=False,  # позже поставить True, когда сайт будет на https://
         )
 
-        return {
-            "message": "Успешный вход",
-            "bool": True,
-        }
+        return response
     else:
-        return {
-            "message": "Неправильный логин и/или пароль.\n1. Повторить попытку.\n2. Зарегистрироваться.",
-            "bool": False,
-        }
+        response = RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+        return templates.TemplateResponse(request=request,name="login.html", context={"login_var": login, "error": True})
+        
+        # return {
+        #     "message": "Неправильный логин и/или пароль.\n1. Повторить попытку.\n2. Зарегистрироваться.",
+        #     "bool": False,
+        # }
 
 
 @routerauth.post("/sign_up", description="user access")
