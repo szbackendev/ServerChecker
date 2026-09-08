@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Login</title>
+        <title>Register</title>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,initial-scale=1"/>
         <meta name="robots" content="index,follow"/>
@@ -10,7 +10,7 @@
     </head>
     <body id="register_body">
         <div id="register_form_div">Register Form</div>
-        <form method="get" id="register_form">
+        <form action="/auth/sign_up" method="post" id="register_form">
             <div id="register_login_div">
                 <label id="register_login_label">Login</label>
             </div>
@@ -23,5 +23,8 @@
                 <button type="submit" id="register_button">Register</button>
             </div>
         </form>
+
+        <!-- Подключение внешнего JS файла из папки static -->
+        <script src="{{ url_for('static', path='register.js') }}"></script>
     </body>
 </html>

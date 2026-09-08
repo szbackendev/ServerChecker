@@ -14,14 +14,17 @@
             <div id="login_label_div">
                 <label id="login_label">Login</label>
             </div>
-            <input type="text" placeholder="Waiting for login..." required name="login_placeholder" id="{% if error %}login_input_error{% else %}login_input{% endif %}", value="{{ login_var or '' }}"/>
+            <input type="text" placeholder="Waiting for login..." required name="login_placeholder" id="login_input"/>
             <div id="password_label_div">
                 <label id="password_label">Password</label>
             </div>
-            <input type="password" required placeholder="Type your password here..." name="password_placeholder" id="{% if error %}password_input_error{% else %}password_input{% endif %}"/>
+            <input type="password" required placeholder="Type your password here..." name="password_placeholder" id="password_input"/>
             <div id="login_button_div">
                 <button type="submit" id="login_button">Login</button>
             </div>
         </form>
+
+        <!-- Подключение внешнего JS файла из папки static -->
+        <script src="{{ url_for('static', path='login.js') }}"></script>
     </body>
 </html>

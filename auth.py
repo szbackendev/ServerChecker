@@ -5,12 +5,10 @@ from typing import Annotated
 import argon2
 import jwt
 import ntplib
-from fastapi import APIRouter, Form, Response, status, Request
-from fastapi.responses import RedirectResponse
-from pydantic import BaseModel
+from fastapi import APIRouter, Form, Response
+from pydantic import BaseModel, Field
 
 from settings import settings
-from templates_config import templates
 
 routerauth = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -55,15 +53,15 @@ def get_users_by_login(login: str) -> tuple:
 
 
 class UserAuthSchema(BaseModel):
-    login: str = Form(alias="login_placeholder")
-    password: str = Form(alias="password_placeholder")
+    login: str = Field(alias="login_placeholder")
+    password: str = Field(alias="password_placeholder")
 
 
 ntplib_client = ntplib.NTPClient()
 
 
 @routerauth.post("/sign_in", description="user access")
-def sign_in(request: Request, userdata: Annotated[UserAuthSchema, Form()], response: Response):
+def sign_in(userdata: Annotated[UserAuthSchema, Form()], response: Response):
 
     login = userdata.login.lower().strip()
     password = userdata.password
@@ -117,8 +115,6 @@ def sign_in(request: Request, userdata: Annotated[UserAuthSchema, Form()], respo
         )  # settings.private_key это приватный ключ, JWT-токен обычно живет 15-60 минут, но для упрощения на данный момент сделаем 24 часа, позже вернем на 15 мин и сделаю refresh token.
         # settings.algorithm это алгоритм кодирования записанный в .env файле
 
-        response = RedirectResponse(url="/user", status_code=status.HTTP_303_SEE_OTHER)   
-
         response.set_cookie(
             key="Authorization",
             value=JWT_token,
@@ -127,10 +123,11 @@ def sign_in(request: Request, userdata: Annotated[UserAuthSchema, Form()], respo
             secure=False,  # позже поставить True, когда сайт будет на https://
         )
 
-        return response
+        return {"ok": True, "redirect_url":"/user"}
     else:
-        response = RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
-        return templates.TemplateResponse(request=request,name="login.html", context={"login_var": login, "error": True})
+        response.status_code = 401
+        return {"ok": False, "message":"Неправильный логин и/или пароль"}
+        
         
         # return {
         #     "message": "Неправильный логин и/или пароль.\n1. Повторить попытку.\n2. Зарегистрироваться.",
@@ -139,7 +136,7 @@ def sign_in(request: Request, userdata: Annotated[UserAuthSchema, Form()], respo
 
 
 @routerauth.post("/sign_up", description="user access")
-def sign_up(userdata: UserAuthSchema, response: Response):
+def sign_up(userdata: Annotated[UserAuthSchema, Form()], response: Response):
 
     login = userdata.login.strip().lower()
     password = userdata.password
@@ -155,9 +152,10 @@ def sign_up(userdata: UserAuthSchema, response: Response):
         try:
             ntp_response = ntplib_client.request("pool.ntp.org", version=4)
         except ntplib.NTPException:
+            response.status_code = 503
             return {
-                "message": "Error connecting to pool.ntp.org server",
-                "bool": False,
+                "message": "Ошибка подключения к pool.ntp.org серверу",
+                "ok": False,
             }
 
         utc_time = datetime.datetime.fromtimestamp(
@@ -180,7 +178,8 @@ def sign_up(userdata: UserAuthSchema, response: Response):
 
         data = get_users_by_login(login)
         if len(data) <= 1:
-            return {"message": "Не удалось получить данные по логину из БД"}
+            response.status_code = 500
+            return {"ok": False, "message": "Не удалось получить данные по логину из БД"}
 
         JWT_token = jwt.encode(
             {
@@ -203,9 +202,7 @@ def sign_up(userdata: UserAuthSchema, response: Response):
             secure=False,  # позже поставить True, когда сайт будет на https://
         )
 
-        return {
-            "message": "Успешная регистрация",
-            "bool": True,
-        }
+        return {"ok": True, "redirect_url":"/user"}
     else:
-        return {"message": "Логин занят", "bool": False}
+        response.status_code = 400
+        return {"ok": False, "message":"Логин занят"}

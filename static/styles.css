@@ -143,7 +143,7 @@ html {
     line-height: 1.15px;
 }
 
-#login_input {
+#login_input, #login_input_error {
     width: 22vw;
     height: 4vh;
     font-family: Inter;
@@ -173,7 +173,7 @@ html {
     text-indent: 5px;
 }
 
-#password_input {
+#password_input, #password_input_error {
     height: 4vh;
     font-family: Inter;
     border-top-left-radius: 4px;
@@ -243,7 +243,7 @@ html {
     font-family: Inter;
 }
 
-#register_login_input {
+#register_login_input, #register_login_input_error {
     width: 22vw;
     height: 4vh;
     font-family: Inter;
@@ -284,7 +284,7 @@ html {
     position: relative;
 }
 
-#register_password_input {
+#register_password_input, #register_password_input_error {
     height: 4vh;
     font-family: Inter;
     border-top-left-radius: 4px;
@@ -2203,4 +2203,25 @@ html {
     opacity: 1;
     transform: translateY(0);
     margin-top: 0px;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-7px);
+  }
+  40%, 80% {
+    transform: translateX(7px);
+  }
+}
+
+#login_input_error,
+#password_input_error,
+#register_login_input_error,
+#register_password_input_error {
+  background-color: #ffebee !important;
+  border-color: #e57373 !important;
+  animation: shake 0.35s ease-in-out;
 }
