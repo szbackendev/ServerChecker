@@ -994,7 +994,6 @@ html {
 #label_old_pswd {
     font-family: Inter;
     font-size: 11px;
-    vertical-align: middle;
     text-align: center;
     display: block;
     flex-wrap: nowrap;
@@ -2224,4 +2223,29 @@ html {
   background-color: #ffebee !important;
   border-color: #e57373 !important;
   animation: shake 0.35s ease-in-out;
+}
+
+#login_switch_div,
+#register_switch_div {
+    position: relative;
+    top: 25px;
+    left: 22%;
+    width: 22vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#login_switch_link,
+#register_switch_link {
+    font-family: Inter;
+    font-size: 12px;
+    color: rgb(0, 71, 178);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#login_switch_link:hover,
+#register_switch_link:hover {
+    color: rgb(0, 45, 115);
 }

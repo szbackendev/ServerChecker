@@ -53,8 +53,8 @@ def get_users_by_login(login: str) -> tuple:
 
 
 class UserAuthSchema(BaseModel):
-    login: str = Field(alias="login_placeholder")
-    password: str = Field(alias="password_placeholder")
+    login: str = Field(alias="login_placeholder", min_length=3, max_length=32)
+    password: str = Field(alias="password_placeholder", min_length=3, max_length=64)
 
 
 ntplib_client = ntplib.NTPClient()
