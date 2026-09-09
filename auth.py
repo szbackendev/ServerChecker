@@ -5,7 +5,7 @@ from typing import Annotated
 import argon2
 import jwt
 import ntplib
-from fastapi import APIRouter, Form, Response
+from fastapi import APIRouter, Cookie, Form, Response
 from pydantic import BaseModel, Field
 
 from settings import settings
@@ -206,3 +206,35 @@ def sign_up(userdata: Annotated[UserAuthSchema, Form()], response: Response):
     else:
         response.status_code = 400
         return {"ok": False, "message":"Логин занят"}
+
+
+class NotAuthenticated(Exception):
+    pass
+
+
+def jwt_check_from_cookie(auth_cookie: Annotated[str | None, Cookie(alias="Authorization")] = None) -> NotAuthenticated | str:
+    if auth_cookie is None:
+        raise NotAuthenticated()
+    else:
+        try:
+            payload = jwt.decode(
+                jwt=auth_cookie,
+                key=settings.public_key,
+                algorithms=settings.algorithm,
+                verify=True,
+                )
+
+            exp_date = payload["exp"]
+
+            try:
+                ntp_response = ntplib_client.request("pool.ntp.org", version=4)
+            except ntplib.NTPException:
+                raise NotAuthenticated()
+
+            if exp_date > ntp_response.tx_time:
+                return True
+
+        except jwt.PyJWTError:
+            raise NotAuthenticated()
+
+        

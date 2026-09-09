@@ -1,13 +1,16 @@
-from fastapi import APIRouter, Request
+from typing import Annotated
 
+from fastapi import APIRouter, Depends, Request
+
+from auth import jwt_check_from_cookie
 from settings import settings
 from templates_config import templates
 
 router_pages = APIRouter(tags=["Frontend pages"])
 
 @router_pages.get("/user")
-def user_dashboard(request: Request):
-    return templates.TemplateResponse(request=request, name="dashboarduser.html")
+def user_dashboard(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+    return templates.TemplateResponse(request=request, name="dashboarduser.html", context={"access": access_status})
 
 @router_pages.get(f"/{settings.admin_panel_url}/admin_login")
 def admin_login(request: Request):
