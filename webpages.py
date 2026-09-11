@@ -13,20 +13,20 @@ def user_dashboard(request: Request, access_status: Annotated[str, Depends(jwt_c
     return templates.TemplateResponse(request=request, name="dashboarduser.html", context={"access": access_status})
 
 @router_pages.get(f"/{settings.admin_panel_url}/admin_login")
-def admin_login(request: Request):
-    return templates.TemplateResponse(request=request, name="adminlogin.html")
+def admin_login(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+    return templates.TemplateResponse(request=request, name="adminlogin.html", context={"access": access_status})
 
 @router_pages.get(f"/{settings.admin_panel_url}/admin_panel")
-def admin_panel(request: Request):
-    return templates.TemplateResponse(request=request, name="adminpanel.html")
+def admin_panel(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+    return templates.TemplateResponse(request=request, name="adminpanel.html", context={"access": access_status})
 
 @router_pages.get("/dashboard_server")
-def dashboard_server(request: Request):
-    return templates.TemplateResponse(request=request, name="dashboardserver.html")
+def dashboard_server(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+    return templates.TemplateResponse(request=request, name="dashboardserver.html", context={"access": access_status})
 
 @router_pages.get("/tg_connect")
-def dashboard_tg(request: Request):
-    return templates.TemplateResponse(request=request, name="dashboardtg.html")
+def dashboard_tg(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+    return templates.TemplateResponse(request=request, name="dashboardtg.html", context={"access": access_status})
 
 @router_pages.get("/docs_page")
 def docs(request: Request):
