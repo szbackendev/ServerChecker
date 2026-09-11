@@ -30,19 +30,20 @@
             </div>
             <div data-type-role="flex-column" id="main_content_index" class="flex-column">
                 <h1 id="hello_usr_text">Hello, {username}</h1>
-                <button type="button" customattributes="" id="change_pswd_btn">
-                    Change password
-</button>
-                <div id="old_pswd_div_index">
-                    <label id="label_old_pswd">Write your old password here.</label>
-                    <input type="password" id="input_old_pswd" required placeholder="Waiting for OLD password..."/>
-                </div>
-                <div id="new_pswd_div_index">
-                    <label id="label_new_pswd">Write your new password here.</label>
-                    <input type="password" id="input_new_pswd" required placeholder="Waiting for NEW password..."/>
-                </div>
-                <button type="submit" id="confirm_reset_pswd_btn">Confirm changing</button>
+                <button type="button" customattributes="" id="change_pswd_btn">Change password</button>
+                <form id="change_pswd_form" class="pswd-form-hidden">
+                    <div id="old_pswd_div_index">
+                        <label id="label_old_pswd">Write your old password here.</label>
+                        <input type="password" id="input_old_pswd" required placeholder="Waiting for OLD password..."/>
+                    </div>
+                    <div id="new_pswd_div_index">
+                        <label id="label_new_pswd">Write your new password here.</label>
+                        <input type="password" id="input_new_pswd" required placeholder="Waiting for NEW password..."/>
+                    </div>
+                    <button type="submit" id="confirm_reset_pswd_btn">Confirm changing</button>
+                </form>
             </div>
         </div>
+        <script src="{{ url_for('static', path='user.js') }}"></script>
     </body>
 </html>

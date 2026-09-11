@@ -66,13 +66,13 @@ class AdminCookieCheck:
         payload = jwt.decode(
             jwt=admin_auth_cookie,
             key=settings.public_key,
-            algorithms=settings.algorithm,
+            algorithms=[settings.algorithm],
             verify=True,
         )
 
         try:
             tx_time = int(self.get_tx_time())
-        except ntplib.NTPException:
+        except (ntplib.NTPException, OSError):
             return False
 
         return bool(
@@ -89,13 +89,13 @@ class AdminCookieCheck:
         payload = jwt.decode(
             jwt=admin_auth_cookie,
             key=settings.public_key,
-            algorithms=settings.algorithm,
+            algorithms=[settings.algorithm],
             verify=True,
         )
 
         try:
             tx_time = int(self.get_tx_time())
-        except ntplib.NTPException:
+        except (ntplib.NTPException, OSError):
             return {"Error": True, "message": "Error connecting to pool.ntp.org server"}
 
         if (
@@ -141,7 +141,7 @@ def admin_sign_in(
     payload = jwt.decode(
         jwt=auth_cookie,
         key=settings.public_key,
-        algorithms=settings.algorithm,
+        algorithms=[settings.algorithm],
         verify=True,
     )
 
@@ -248,7 +248,7 @@ def user_reset_password(
             if type(new_password) is str:
                 try:
                     current_time = ACC.get_tx_time()
-                except ntplib.NTPException:
+                except (ntplib.NTPException, OSError):
                     return {"message": "Error connecting to pool.ntp.org server"}
 
                 with sqlite3.connect(USERS_DB_NAME) as users:

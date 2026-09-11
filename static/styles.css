@@ -2249,3 +2249,17 @@ html {
 #register_switch_link:hover {
     color: rgb(0, 45, 115);
 }
+
+/* Скрытое состояние формы */
+.pswd-form-hidden {
+    display: none !important;
+}
+
+/* Форма в открытом состоянии: сохраняем вертикальную структуру flexbox */
+#change_pswd_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}

@@ -30,7 +30,7 @@ def get_user_id(
     user_id = jwt.decode(
         jwt=auth_cookie,
         key=settings.public_key,
-        algorithms=settings.algorithm,
+        algorithms=[settings.algorithm],
         verify=True,
     )["sub"]
 

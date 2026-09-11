@@ -23,22 +23,27 @@ with sqlite3.connect(USERS_DB_NAME) as users:
                    password_hash TEXT NOT NULL,
                    role TEXT NOT NULL,
                    reg_date TEXT NOT NULL,
+                   token_version INTEGER DEFAULT 1,
                    comment TEXT
                    )""")
 
     cursor.execute("SELECT COUNT(*) FROM Users")
     if cursor.fetchone()[0] == 0:
         cursor.execute(
-            "INSERT INTO Users (login, password_hash, role, reg_date, comment) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO Users (login, password_hash, role, reg_date, token_version, comment) VALUES (?, ?, ?, ?, ?, ?)",
             (
                 "login0",
                 "password_hash0",
                 "user",
                 "yyyy-mm-dd",
+                "1",
                 "Template",
             ),
         )
     users.commit()
+
+class UserNotFoundError(Exception):
+    pass
 
 
 def get_users_by_login(login: str) -> tuple:
@@ -49,7 +54,7 @@ def get_users_by_login(login: str) -> tuple:
         if result is not None:
             return result
         else:
-            return (0,)
+            raise UserNotFoundError()
 
 
 class UserAuthSchema(BaseModel):
@@ -95,12 +100,20 @@ def sign_in(userdata: Annotated[UserAuthSchema, Form()], response: Response):
         return False
 
     data = get_users_by_login(login)
+    dbtoken = data[5]  # индекс в кортеже data, где находится token_version
 
     if (
         login_check(login, data)
         and password_check(password, data[2], try_count=3) is True
     ):  # data[2] это индекс в кортеже где находится хэш пароля
-        ntp_response = ntplib_client.request("pool.ntp.org", version=4)
+        try:
+            ntp_response = ntplib_client.request("pool.ntp.org", version=4)
+        except (ntplib.NTPException, OSError):
+            response.status_code = 503
+            return {
+                "message": "Ошибка подключения к pool.ntp.org серверу",
+                "ok": False,
+                }
 
         JWT_token = jwt.encode(
             {
@@ -109,6 +122,7 @@ def sign_in(userdata: Annotated[UserAuthSchema, Form()], response: Response):
                 "logged": True,
                 "exp": int(ntp_response.tx_time)
                 + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
+                "token_ver": dbtoken
             },
             settings.private_key,
             settings.algorithm,
@@ -145,13 +159,16 @@ def sign_up(userdata: Annotated[UserAuthSchema, Form()], response: Response):
 
     def is_login_available(login) -> bool:
         nonlocal data
-        data = get_users_by_login(login)
-        return not len(data) > 1
+        try: 
+            data = get_users_by_login(login)
+        except UserNotFoundError:
+            return True
+        return False
 
     if is_login_available(login):
         try:
             ntp_response = ntplib_client.request("pool.ntp.org", version=4)
-        except ntplib.NTPException:
+        except (ntplib.NTPException, OSError):
             response.status_code = 503
             return {
                 "message": "Ошибка подключения к pool.ntp.org серверу",
@@ -174,20 +191,17 @@ def sign_up(userdata: Annotated[UserAuthSchema, Form()], response: Response):
                     None,
                 ),
             )
+            sub = cursor.lastrowid
             users.commit()
-
-        data = get_users_by_login(login)
-        if len(data) <= 1:
-            response.status_code = 500
-            return {"ok": False, "message": "Не удалось получить данные по логину из БД"}
 
         JWT_token = jwt.encode(
             {
-                "sub": str(data[0]),  # data[0] это id пользователя в БД
+                "sub": str(sub),  # data[0] это id пользователя в БД
                 "role": "user",
                 "logged": True,
                 "exp": int(ntp_response.tx_time)
                 + 86400,  # 86400 секунд это +1 день (жизнь токена 24 часа)
+                "token_ver": 1
             },
             settings.private_key,
             settings.algorithm,
@@ -212,7 +226,7 @@ class NotAuthenticated(Exception):
     pass
 
 
-def jwt_check_from_cookie(auth_cookie: Annotated[str | None, Cookie(alias="Authorization")] = None) -> NotAuthenticated | str:
+def jwt_check_from_cookie(auth_cookie: Annotated[str | None, Cookie(alias="Authorization")] = None) -> bool:
     if auth_cookie is None:
         raise NotAuthenticated()
     else:
@@ -220,19 +234,44 @@ def jwt_check_from_cookie(auth_cookie: Annotated[str | None, Cookie(alias="Autho
             payload = jwt.decode(
                 jwt=auth_cookie,
                 key=settings.public_key,
-                algorithms=settings.algorithm,
+                algorithms=[settings.algorithm],
                 verify=True,
                 )
 
-            exp_date = payload["exp"]
+            exp_date: int = payload["exp"]
+            jwt_token_ver: str = payload["token_ver"]
+            userid: str = payload["sub"]
+
+            if not userid.isdigit():
+                raise NotAuthenticated()
+            
+            try:
+                with sqlite3.connect(USERS_DB_NAME) as users:
+                    cursor = users.cursor()
+                    cursor.execute(
+                        "SELECT token_version FROM Users WHERE id = ?",
+                        (int(userid),)
+                        )
+                    temp: tuple | None = cursor.fetchone()
+                    users.commit()
+
+                if temp is None:
+                    raise NotAuthenticated()
+                else:
+                    db_token_ver = temp[0]
+                                        
+            except sqlite3.Error:
+                raise NotAuthenticated()
 
             try:
                 ntp_response = ntplib_client.request("pool.ntp.org", version=4)
-            except ntplib.NTPException:
+            except (ntplib.NTPException, OSError):
                 raise NotAuthenticated()
 
-            if exp_date > ntp_response.tx_time:
+            if exp_date > ntp_response.tx_time and jwt_token_ver == db_token_ver:
                 return True
+            else:
+                raise NotAuthenticated()
 
         except jwt.PyJWTError:
             raise NotAuthenticated()

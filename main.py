@@ -1,10 +1,10 @@
 import uvicorn
 from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from admin_panel import routeradmin as adminrouter
-from auth import NotAuthenticated
+from auth import NotAuthenticated, UserNotFoundError
 from auth import routerauth as authrouter
 from ip_handler import routerips as ipsrouter
 from webpages import router_pages as pages_router
@@ -19,6 +19,10 @@ app.include_router(pages_router)
 @app.exception_handler(NotAuthenticated)
 def not_authenticated_handler(request: Request, exc: NotAuthenticated):
     return RedirectResponse("/login", status_code=303)
+
+@app.exception_handler(UserNotFoundError)
+def db_data_error(request: Request, exc: UserNotFoundError):
+    return JSONResponse(content={"ok":False, "message":"Неправильный логин и/или пароль"}, status_code=401)
 
 def start():
     uvicorn.run(
