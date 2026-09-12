@@ -273,9 +273,7 @@ def user_reset_password(
             return {"message": "Error with checking admin rights"}
 
 
-@routeradmin.get(
-    "/get_all_users"
-)  # ручка для получения пользователей, но без sensitive data
+@routeradmin.get("/get_all_users")  # ручка для получения пользователей, но без sensitive data
 def get_all_users(
     admin_auth_cookie: Annotated[str | None, Cookie(alias="admin_access")] = None,
 ) -> list | bool:

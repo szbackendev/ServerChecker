@@ -38,10 +38,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify(payload)
             });
 
+
             const data = await response.json();
 
             if (response.ok && data.ok) {
-                // Если выбран вариант с полным разлогином — перенаправляем на login
+                // перенаправляем на login
                 window.location.href = data.redirect_url || "/login";
             } else {
                 // Обработка неверного старого пароля

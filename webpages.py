@@ -2,30 +2,30 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request
 
-from auth import jwt_check_from_cookie
+from auth import JWT_check_from_cookie
 from settings import settings
 from templates_config import templates
 
 router_pages = APIRouter(tags=["Frontend pages"])
 
 @router_pages.get("/user")
-def user_dashboard(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+def user_dashboard(request: Request, access_status: Annotated[bool, Depends(JWT_check_from_cookie())]):
     return templates.TemplateResponse(request=request, name="dashboarduser.html", context={"access": access_status})
 
 @router_pages.get(f"/{settings.admin_panel_url}/admin_login")
-def admin_login(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+def admin_login(request: Request, access_status: Annotated[bool, Depends(JWT_check_from_cookie())]):
     return templates.TemplateResponse(request=request, name="adminlogin.html", context={"access": access_status})
 
 @router_pages.get(f"/{settings.admin_panel_url}/admin_panel")
-def admin_panel(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+def admin_panel(request: Request, access_status: Annotated[bool, Depends(JWT_check_from_cookie())]):
     return templates.TemplateResponse(request=request, name="adminpanel.html", context={"access": access_status})
 
 @router_pages.get("/dashboard_server")
-def dashboard_server(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+def dashboard_server(request: Request, access_status: Annotated[bool, Depends(JWT_check_from_cookie())]):
     return templates.TemplateResponse(request=request, name="dashboardserver.html", context={"access": access_status})
 
 @router_pages.get("/tg_connect")
-def dashboard_tg(request: Request, access_status: Annotated[str, Depends(jwt_check_from_cookie)]):
+def dashboard_tg(request: Request, access_status: Annotated[bool, Depends(JWT_check_from_cookie())]):
     return templates.TemplateResponse(request=request, name="dashboardtg.html", context={"access": access_status})
 
 @router_pages.get("/docs_page")

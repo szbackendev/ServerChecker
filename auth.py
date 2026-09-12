@@ -5,7 +5,7 @@ from typing import Annotated
 import argon2
 import jwt
 import ntplib
-from fastapi import APIRouter, Cookie, Form, Response
+from fastapi import APIRouter, Cookie, Depends, Form, Response
 from pydantic import BaseModel, Field
 
 from settings import settings
@@ -60,6 +60,8 @@ def get_users_by_login(login: str) -> tuple:
 class UserAuthSchema(BaseModel):
     login: str = Field(alias="login_placeholder", min_length=3, max_length=32)
     password: str = Field(alias="password_placeholder", min_length=3, max_length=64)
+
+
 
 
 ntplib_client = ntplib.NTPClient()
@@ -226,54 +228,191 @@ class NotAuthenticated(Exception):
     pass
 
 
-def jwt_check_from_cookie(auth_cookie: Annotated[str | None, Cookie(alias="Authorization")] = None) -> bool:
-    if auth_cookie is None:
-        raise NotAuthenticated()
-    else:
-        try:
-            payload = jwt.decode(
-                jwt=auth_cookie,
-                key=settings.public_key,
-                algorithms=[settings.algorithm],
-                verify=True,
-                )
+class JWT_check_from_cookie:
+    def __init__(self, get_info: bool = False):
+        self.get_info = get_info
 
-            exp_date: int = payload["exp"]
-            jwt_token_ver: str = payload["token_ver"]
-            userid: str = payload["sub"]
-
-            if not userid.isdigit():
+    def __call__(self, auth_cookie: Annotated[str | None, Cookie(alias="Authorization")] = None):
+        if auth_cookie is None:
                 raise NotAuthenticated()
-            
+        else:
             try:
-                with sqlite3.connect(USERS_DB_NAME) as users:
-                    cursor = users.cursor()
-                    cursor.execute(
-                        "SELECT token_version FROM Users WHERE id = ?",
-                        (int(userid),)
-                        )
-                    temp: tuple | None = cursor.fetchone()
-                    users.commit()
-
-                if temp is None:
+                payload = jwt.decode(
+                    jwt=auth_cookie,
+                    key=settings.public_key,
+                    algorithms=[settings.algorithm],
+                    verify=True,
+                    )
+    
+                exp_date: int = payload["exp"]
+                jwt_token_ver: int = payload["token_ver"]
+                userid: str = payload["sub"]
+    
+                if not userid.isdigit():
                     raise NotAuthenticated()
+                
+                try:
+                    with sqlite3.connect(USERS_DB_NAME) as users:
+                        cursor = users.cursor()
+                        cursor.execute(
+                            "SELECT token_version FROM Users WHERE id = ?",
+                            (int(userid),)
+                            )
+                        temp: tuple | None = cursor.fetchone()
+                        users.commit()
+    
+                    if temp is None:
+                        raise NotAuthenticated()
+                    else:
+                        db_token_ver: int = temp[0]
+                                            
+                except sqlite3.Error:
+                    raise NotAuthenticated()
+    
+                try:
+                    ntp_response = ntplib_client.request("pool.ntp.org", version=4)
+                except (ntplib.NTPException, OSError):
+                    raise NotAuthenticated()
+    
+                if exp_date > ntp_response.tx_time and jwt_token_ver == db_token_ver:
+                    if self.get_info:
+                        return {"ok": True, "db_token_ver": db_token_ver, "payload": payload}
+                    else:
+                        return True
                 else:
-                    db_token_ver = temp[0]
+                    raise NotAuthenticated()
+    
+            except jwt.PyJWTError:
+                raise NotAuthenticated()
+
+# def jwt_check_from_cookie(auth_cookie: Annotated[str | None, Cookie(alias="Authorization")] = None, get_info = False) -> bool:
+#     if auth_cookie is None:
+#         print("auth cookie none")
+#         raise NotAuthenticated()
+#     else:
+#         try:
+#             payload = jwt.decode(
+#                 jwt=auth_cookie,
+#                 key=settings.public_key,
+#                 algorithms=[settings.algorithm],
+#                 verify=True,
+#                 )
+
+#             exp_date: int = payload["exp"]
+#             jwt_token_ver: int = payload["token_ver"]
+#             userid: str = payload["sub"]
+
+#             if not userid.isdigit():
+#                 raise NotAuthenticated()
+            
+#             try:
+#                 with sqlite3.connect(USERS_DB_NAME) as users:
+#                     cursor = users.cursor()
+#                     cursor.execute(
+#                         "SELECT token_version FROM Users WHERE id = ?",
+#                         (int(userid),)
+#                         )
+#                     temp: tuple | None = cursor.fetchone()
+#                     users.commit()
+
+#                 if temp is None:
+#                     raise NotAuthenticated()
+#                 else:
+#                     db_token_ver: int = temp[0]
                                         
-            except sqlite3.Error:
-                raise NotAuthenticated()
+#             except sqlite3.Error:
+#                 raise NotAuthenticated()
 
-            try:
-                ntp_response = ntplib_client.request("pool.ntp.org", version=4)
-            except (ntplib.NTPException, OSError):
-                raise NotAuthenticated()
+#             try:
+#                 ntp_response = ntplib_client.request("pool.ntp.org", version=4)
+#             except (ntplib.NTPException, OSError):
+#                 print("ntp failed")
+#                 raise NotAuthenticated()
 
-            if exp_date > ntp_response.tx_time and jwt_token_ver == db_token_ver:
-                return True
-            else:
-                raise NotAuthenticated()
+#             if exp_date > ntp_response.tx_time and jwt_token_ver == db_token_ver:
+#                 if get_info:
+#                     return {"ok": True, "db_token_ver": db_token_ver, "payload": payload}
+#                 else:
+#                     return True
+#             else:
+#                 raise NotAuthenticated()
 
-        except jwt.PyJWTError:
-            raise NotAuthenticated()
+#         except jwt.PyJWTError:
+#             raise NotAuthenticated()
+
+class ChangePasswordError(Exception):
+    pass
+
+class UserChangePasswordSchema(BaseModel):
+    old_password: str = Field(min_length=3, max_length=64, pattern=r"^[!-~№]+$")
+    new_password: str = Field(min_length=3, max_length=64, pattern=r"^[!-~№]+$")
+
+@routerauth.post("/change_password", description="user access")
+def change_password(user_pswds: UserChangePasswordSchema, response: Response, full_info: Annotated[dict, Depends(JWT_check_from_cookie(get_info=True))]):
+    old_pass = user_pswds.old_password
+    new_pass = user_pswds.new_password
+    payload: dict = full_info["payload"]
+    sub = int(payload["sub"])
+
+    try:
+        with sqlite3.connect(USERS_DB_NAME) as users:
+            cursor = users.cursor()
+            cursor.execute("SELECT password_hash FROM Users WHERE id = ?", (sub,))
+            temp: tuple | None = cursor.fetchone()
+            users.commit()
+                    
+        if temp is None:
+            raise ChangePasswordError()
+        else:
+            pswd_hash = temp[0]
+    except sqlite3.Error:
+        raise ChangePasswordError()
+
+    ph = argon2.PasswordHasher()
+    try:
+        tmp_bool = ph.verify(pswd_hash, old_pass)
+    except argon2.exceptions.VerificationError:  # для тестов функции
+        raise ChangePasswordError()
+    except argon2.exceptions.InvalidHashError:  # для тестов функции
+        raise ChangePasswordError()
+    except argon2.exceptions.VerifyMismatchError:
+        raise ChangePasswordError()
+    except argon2.exceptions.Argon2Error:
+        raise ChangePasswordError()
+        
+
+    if old_pass == new_pass or (not tmp_bool):
+        raise ChangePasswordError()
+    else:
+        new_pass_hash = ph.hash(new_pass)
+
+        try:
+            ntp_response = ntplib_client.request("pool.ntp.org", version=4)
+        except (ntplib.NTPException, OSError):
+            response.status_code = 503
+            return {
+                "message": "Ошибка подключения к pool.ntp.org серверу",
+                "ok": False,
+                }
+        try:
+            with sqlite3.connect(USERS_DB_NAME) as users:
+                cursor = users.cursor()
+                cursor.execute(
+                    "UPDATE Users SET token_version = ?, password_hash = ?, comment = ? WHERE id = ?",
+                    (
+                        full_info["db_token_ver"] + 1,
+                        new_pass_hash,
+                        f"Password changed at {datetime.datetime.fromtimestamp(ntp_response.tx_time, tz=datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')} by this user",
+                        sub,
+                    ),
+                )
+                users.commit()
+        except sqlite3.Error:
+            raise ChangePasswordError()
+        return {"ok":True,"message": "Пароль успешно изменен"}
+
+        
+            
+
 
         
