@@ -54,4 +54,20 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Сетевая ошибка:", err);
         }
     });
+
+    const logoutBtn = document.getElementById("logout_btn");
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", async () => {
+            try {
+                await fetch("/auth/logout", {
+                    method: "POST"
+                });
+            } catch (err) {
+                console.error("Ошибка при выходе:", err);
+            } finally {
+                window.location.href = "/login";
+            }
+        });
+    }
 });

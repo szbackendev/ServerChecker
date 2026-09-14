@@ -79,30 +79,37 @@ def new_IP(
     if not re_match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", user_ip):
         return {"message": "Введенная строка не является IP-адресом. Формат: X.X.X.X"}
 
-    with sqlite3.connect(USERS_DB_NAME) as users:
-        cursor = users.cursor()
-
-        cursor.execute("""CREATE TABLE IF NOT EXISTS known_IPs (
-                       id INTEGER PRIMARY KEY,
-                       user_id INTEGER NOT NULL,
-                       ip TEXT NOT NULL,
-                       UNIQUE(user_id, ip)
-                       )""")
-
-        cursor.execute(
-            "INSERT OR IGNORE INTO known_IPs (user_id, ip) VALUES (?,?)",
-            (user_id, user_ip),
-        )
-
-        cursor.execute("SELECT COUNT(*) FROM known_IPs WHERE user_id = ?", (user_id,))
-
-        if cursor.fetchone()[0] > 5:
+    try:
+        with sqlite3.connect(USERS_DB_NAME) as users:
+            cursor = users.cursor()
+    
+            cursor.execute("""CREATE TABLE IF NOT EXISTS known_IPs (
+                           id INTEGER PRIMARY KEY,
+                           user_id INTEGER NOT NULL,
+                           ip TEXT NOT NULL,
+                           is_active INTEGER NOT NULL,
+                           last_checked INTEGER,
+                           UNIQUE(user_id, ip)
+                           )""")
+    
             cursor.execute(
-                "DELETE FROM known_IPs WHERE user_id = ? AND id = (SELECT MIN(id) FROM known_IPs WHERE user_id = ?)",
-                (user_id, user_id),
+                "INSERT OR IGNORE INTO known_IPs (user_id, ip) VALUES (?,?)",
+                (user_id, user_ip),
             )
-
-        users.commit()
+    
+            cursor.execute("SELECT COUNT(*) FROM known_IPs WHERE user_id = ?", (user_id,))
+    
+            if cursor.fetchone()[0] > 5:
+                cursor.execute(
+                    "DELETE FROM known_IPs WHERE user_id = ? AND id = (SELECT MIN(id) FROM known_IPs WHERE user_id = ?)",
+                    (user_id, user_id),
+                )
+    
+            users.commit()
+    except sqlite3.Error as e:
+        print(e)
+        raise sqlite3.Error
+        
     return {
         "message": f"Успешно добавлен IP-адрес: {user_ip}",
         "new_ip": user_ip,

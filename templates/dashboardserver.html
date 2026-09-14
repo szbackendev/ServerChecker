@@ -31,24 +31,14 @@
             <div data-type-role="flex-column" id="main_content_dashboardserver" class="flex-column">
                 <section id="main_content_section_server" class="section">
                     <div id="ip_choicer_div_server" class="container">
-                        <select type="text" id="ip_choicer_server" required>
-                            <option value="opt1" id="1st_option">
-                                🔴 | IP: xxx.xxx.xxx | 📶 xxx ms
-</option>
-                            <option value="opt2" id="2nd_option">
-                                🟢 | IP: xxx.xxx.xxx | 📶 xxx ms
-</option>
-                            <option value="opt3" id="3rd_option">
-                                🔴 | IP: xxx.xxx.xxx | 📶 xxx ms
-</option>
-                            <option value="opt4" id="4th_option">
-                                🟢 | IP: xxx.xxx.xxx | 📶 xxx ms
-</option>
-                            <option value="opt5" id="5th_option">
-                                🔴 | IP: xxx.xxx.xxx | 📶 xxx ms
-</option>
-                            <option value="opt6" id="6th_option">Add new IP</option>
+                        <select id="ip_choicer_server" required>
+                            <option value="" disabled selected>Select server IP</option>
+                            <option value="add_new_ip" id="6th_option" data-action="create">➕ Add new IP</option>
                         </select>
+                    </div>
+                    <div id="no_servers_div_server" class="container">
+                        <span id="no_servers_text">No servers added yet. Please add your first IP address.</span>
+                        <button type="button" id="no_servers_add_btn">➕ Add server</button>
                     </div>
                     <div id="ip_choicer_div2_server" class="container">
                         <span id="stopped_service_text">🔴 | Service “ServerCheckerService” is not running</span>
@@ -74,9 +64,7 @@
                                     </div>
                                 </button>
                             </div>
-                            <div id="ping_summ_info_text">
-                                “Summary information about the specified settings”
-</div>
+                            <div id="ping_summ_info_text">“Summary information about the specified settings”</div>
                             <div id="ping_confirm_deny_btns">
                                 <button type="button" id="ping_confirm_btn">Confirm</button>
                                 <button type="button" id="ping_deny_btn">Deny</button>
@@ -128,7 +116,20 @@
                         </div>
                     </div>
                 </section>
+                <div id="modal_add_ip" class="modal-overlay modal-hidden">
+                    <div class="modal-window">
+                        <h3>Add Server IP</h3>
+                        <input type="text" id="input_new_ip" placeholder="192.168.1.1" autocomplete="off" />
+                        <div id="modal_ip_error" class="modal-error-text"></div>
+                        <div class="modal-buttons">
+                            <button type="button" id="btn_cancel_ip">Cancel</button>
+                            <button type="button" id="btn_save_ip">Save</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+        
+        <script src="{{ url_for('static', path='server.js') }}"></script>
     </body>
 </html>
