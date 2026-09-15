@@ -6,7 +6,6 @@ import argon2
 import jwt
 import ntplib
 from fastapi import APIRouter, Cookie, Depends, Form, Response
-from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 from settings import settings
@@ -15,33 +14,36 @@ routerauth = APIRouter(prefix="/auth", tags=["Auth"])
 
 USERS_DB_NAME = settings.USERS_DB_NAME
 
-# Создаем БД users если еще не создана и суем туда Template
-with sqlite3.connect(USERS_DB_NAME) as users:
-    cursor = users.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS Users (
-                   id INTEGER PRIMARY KEY,
-                   login TEXT NOT NULL UNIQUE,
-                   password_hash TEXT NOT NULL,
-                   role TEXT NOT NULL,
-                   reg_date TEXT NOT NULL,
-                   token_version INTEGER DEFAULT 1,
-                   comment TEXT
-                   )""")
-
-    cursor.execute("SELECT COUNT(*) FROM Users")
-    if cursor.fetchone()[0] == 0:
-        cursor.execute(
-            "INSERT INTO Users (login, password_hash, role, reg_date, token_version, comment) VALUES (?, ?, ?, ?, ?, ?)",
-            (
-                "login0",
-                "password_hash0",
-                "user",
-                "yyyy-mm-dd",
-                "1",
-                "Template",
-            ),
-        )
-    users.commit()
+try:
+    # Создаем БД users если еще не создана и суем туда Template
+    with sqlite3.connect(USERS_DB_NAME) as users:
+        cursor = users.cursor()
+        cursor.execute("""CREATE TABLE IF NOT EXISTS Users (
+                       id INTEGER PRIMARY KEY,
+                       login TEXT NOT NULL UNIQUE,
+                       password_hash TEXT NOT NULL,
+                       role TEXT NOT NULL,
+                       reg_date TEXT NOT NULL,
+                       token_version INTEGER DEFAULT 1,
+                       comment TEXT
+                       )""")
+    
+        cursor.execute("SELECT COUNT(*) FROM Users")
+        if cursor.fetchone()[0] == 0:
+            cursor.execute(
+                "INSERT INTO Users (login, password_hash, role, reg_date, comment) VALUES (?, ?, ?, ?, ?)",
+                (
+                    "login0",
+                    "password_hash0",
+                    "user",
+                    "yyyy-mm-dd",
+                    "Template",
+                ),
+            )
+        users.commit()
+except sqlite3.Error:
+    print("ошибка создания таблицы")
+    Response(status_code=401)
 
 class UserNotFoundError(Exception):
     pass
@@ -59,8 +61,8 @@ def get_users_by_login(login: str) -> tuple:
 
 
 class UserAuthSchema(BaseModel):
-    login: str = Field(alias="login_placeholder", min_length=3, max_length=32)
-    password: str = Field(alias="password_placeholder", min_length=3, max_length=64)
+    login: str = Field(alias="login_placeholder", min_length=3, max_length=32, pattern=r"^[a-zA-Z0-9]+$")
+    password: str = Field(alias="password_placeholder", min_length=3, max_length=64, pattern=r"^[!-~№]+$")
 
 
 
@@ -102,8 +104,12 @@ def sign_in(userdata: Annotated[UserAuthSchema, Form()], response: Response):
                 }
         return False
 
-    data = get_users_by_login(login)
-    dbtoken = data[5]  # индекс в кортеже data, где находится token_version
+    try: 
+        data = get_users_by_login(login)
+        dbtoken = data[5]  # индекс в кортеже data, где находится token_version
+    except UserNotFoundError, IndexError:
+        response.status_code = 401
+        return {"ok": False, "message":"Неправильный логин и/или пароль"}
 
     if (
         login_check(login, data)
@@ -182,20 +188,24 @@ def sign_up(userdata: Annotated[UserAuthSchema, Form()], response: Response):
             ntp_response.tx_time, tz=datetime.timezone.utc
         ).strftime("%Y-%m-%d")
 
-        with sqlite3.connect(USERS_DB_NAME) as users:
-            cursor = users.cursor()
-            cursor.execute(
-                "INSERT INTO Users (login, password_hash, role, reg_date, comment) VALUES (?, ?, ?, ?, ?)",
-                (
-                    login,
-                    argon2.PasswordHasher().hash(password),
-                    "user",
-                    utc_time,  # дата регистрации в формате yyyy-mm-dd
-                    None,
-                ),
-            )
-            sub = cursor.lastrowid
-            users.commit()
+        try:
+            with sqlite3.connect(USERS_DB_NAME) as users:
+                cursor = users.cursor()
+                cursor.execute(
+                    "INSERT INTO Users (login, password_hash, role, reg_date, comment) VALUES (?, ?, ?, ?, ?)",
+                    (
+                        login,
+                        argon2.PasswordHasher().hash(password),
+                        "user",
+                        utc_time,  # дата регистрации в формате yyyy-mm-dd
+                        None,
+                    ),
+                )
+                sub = cursor.lastrowid
+                users.commit()
+        except sqlite3.Error:
+            response.status_code = 400
+            return {"ok": False, "message":"Логин занят"}
 
         JWT_token = jwt.encode(
             {
@@ -284,7 +294,7 @@ class JWT_check_from_cookie:
                 else:
                     raise NotAuthenticated()
     
-            except jwt.PyJWTError:
+            except jwt.PyJWTError, KeyError:
                 raise NotAuthenticated()
 
 
@@ -361,6 +371,5 @@ def change_password(user_pswds: UserChangePasswordSchema, response: Response, fu
 
 @routerauth.post("/logout", description="user access")
 def user_logout(response: Response):
-    response.status_code = 303
     response.delete_cookie(key="Authorization", secure=False, httponly=True)
-    return response
+    return {"ok":True}

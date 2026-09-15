@@ -4,7 +4,7 @@ from re import match as re_match
 from typing import Annotated
 
 import jwt
-from fastapi import APIRouter, Cookie, Depends
+from fastapi import APIRouter, Cookie, Depends, Response
 
 from settings import settings
 
@@ -14,6 +14,8 @@ routerips = APIRouter(prefix="/ips", tags=["IPs"])
 DEF_SERVER_IP = "1.1.1.1"
 USERS_DB_NAME = settings.USERS_DB_NAME
 
+class ip_handler_error(Exception):  # общий класс для всех ошибок в ip_handler.py
+    pass
 
 def funcs_choice():
     pass  # тоже пока не понятно как это будет в интерфейсе сайта выглядить и нужна ли вообще эта функция
@@ -27,12 +29,20 @@ def get_user_id(
     if auth_cookie is None:
         return 0
 
-    user_id = jwt.decode(
-        jwt=auth_cookie,
-        key=settings.public_key,
-        algorithms=[settings.algorithm],
-        verify=True,
-    )["sub"]
+    try:
+        jwt_payload = jwt.decode(
+            jwt=auth_cookie,
+            key=settings.public_key,
+            algorithms=[settings.algorithm],
+            verify=True,
+            )
+    except jwt.PyJWTError:
+        return 0
+
+    try:
+        user_id = jwt_payload["sub"]
+    except KeyError:
+        return 0
 
     return user_id
 
@@ -40,32 +50,36 @@ def get_user_id(
 @routerips.get("/get_ips", description="user access")
 def prev_IPs(
     user_id: Annotated[str, Depends(get_user_id)],
-):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
+response: Response):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
 
-    if user_id == "0":
-        return {"message": "Ошибка во взятии user_id из payload JWT-токена"}
+    if user_id in (0, "0"):
+        raise ip_handler_error()
 
-    with sqlite3.connect(USERS_DB_NAME) as users:
-        cursor = users.cursor()
-        cursor.execute("""SELECT EXISTS (
-                       SELECT 1
-                       FROM sqlite_master
-                       WHERE type = 'table' AND name = 'known_IPs'
-                       )""")
-        if cursor.fetchone()[0] == 0:
-            return {"message": "Список предыдущих IP-адресов пуст."}
-        else:
-            cursor.execute(
-                """SELECT ip FROM known_IPs WHERE user_id = ? ORDER BY id DESC""",
-                (user_id,),
-            )
-            ips = cursor.fetchall()
-
-            if len(ips) == 0:
+    try:
+        with sqlite3.connect(USERS_DB_NAME) as users:
+            cursor = users.cursor()
+            cursor.execute("""SELECT EXISTS (
+                           SELECT 1
+                           FROM sqlite_master
+                           WHERE type = 'table' AND name = 'known_IPs'
+                           )""")
+            if cursor.fetchone()[0] == 0:
                 return {"message": "Список предыдущих IP-адресов пуст."}
             else:
-                list_of_ips = [ip[0] for ip in ips]
-                return {"IPs": list_of_ips}
+                cursor.execute(
+                    """SELECT ip FROM known_IPs WHERE user_id = ? ORDER BY id DESC""",
+                    (user_id,),
+                )
+                ips = cursor.fetchall()
+    
+                if len(ips) == 0:
+                    return {"message": "Список предыдущих IP-адресов пуст."}
+                else:
+                    list_of_ips = [ip[0] for ip in ips]
+                    return {"IPs": list_of_ips}
+    except sqlite3.Error:
+        raise ip_handler_error()
+        
 
 
 @routerips.post("/new_ip", description="user access")
@@ -93,8 +107,8 @@ def new_IP(
                            )""")
     
             cursor.execute(
-                "INSERT OR IGNORE INTO known_IPs (user_id, ip) VALUES (?,?)",
-                (user_id, user_ip),
+                "INSERT OR IGNORE INTO known_IPs (user_id, ip, is_active) VALUES (?,?,?)",
+                (user_id, user_ip, 0),
             )
     
             cursor.execute("SELECT COUNT(*) FROM known_IPs WHERE user_id = ?", (user_id,))
@@ -107,8 +121,7 @@ def new_IP(
     
             users.commit()
     except sqlite3.Error as e:
-        print(e)
-        raise sqlite3.Error
+        raise ip_handler_error()
         
     return {
         "message": f"Успешно добавлен IP-адрес: {user_ip}",
