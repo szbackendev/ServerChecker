@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from admin_panel import routeradmin as adminrouter
 from auth import ChangePasswordError, NotAuthenticated, UserNotFoundError
 from auth import routerauth as authrouter
+from ip_funcs import router_ip_funcs as ip_funcs_router
 from ip_handler import ip_handler_error
 from ip_handler import routerips as ipsrouter
 from lifespan import lifespan
@@ -13,6 +14,7 @@ from webpages import router_pages as pages_router
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(authrouter)
+app.include_router(ip_funcs_router)
 app.include_router(ipsrouter)
 app.include_router(adminrouter)
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -12,6 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Кнопка из экрана пустого состояния
     const noServersAddBtn = document.getElementById("no_servers_add_btn");
 
+    // Элементы активации службы
+    const installBtn = document.getElementById("install_btn_server");
+    const alreadyInstalledLink = document.getElementById("undr_btn_text_server");
+
     let previousSelectedValue = "";
     const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 
@@ -48,10 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const opt = document.createElement("option");
             opt.value = ip;
             
-            // Тестовое распределение: первый зеленый, остальные красные
-            const isInstalled = (index === 0);
-            opt.dataset.status = isInstalled ? "active" : "inactive";
-            opt.textContent = `${isInstalled ? "🟢" : "🔴"} | IP: ${ip}`;
+            // По умолчанию все серверы добавляются со статусом inactive (🔴)
+            opt.dataset.status = "inactive";
+            opt.textContent = `🔴 | IP: ${ip}`;
 
             if (activeIp ? ip === activeIp : index === 0) {
                 opt.selected = true;
@@ -79,6 +82,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Перевод выбранного сервера в статус active (🟢)
+    function activateCurrentServer() {
+        const selectedOpt = ipSelect.options[ipSelect.selectedIndex];
+        if (!selectedOpt || selectedOpt.value === "add_new_ip") return;
+
+        selectedOpt.dataset.status = "active";
+        selectedOpt.textContent = `🟢 | IP: ${selectedOpt.value}`;
+        updateInterfaceState();
+    }
+
     async function loadIps(selectIpAfter = null) {
         try {
             const res = await fetch("/ips/get_ips");
@@ -92,6 +105,14 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Failed to load IPs:", err);
             renderIpOptions([], null);
         }
+    }
+
+    // Слушатели активации службы
+    if (installBtn) {
+        installBtn.addEventListener("click", activateCurrentServer);
+    }
+    if (alreadyInstalledLink) {
+        alreadyInstalledLink.addEventListener("click", activateCurrentServer);
     }
 
     // Слушатель выбора в селекторе

@@ -76,7 +76,7 @@ response: Response):  # проверка есть ли таблица known_IPs,
                     return {"message": "Список предыдущих IP-адресов пуст."}
                 else:
                     list_of_ips = [ip[0] for ip in ips]
-                    return {"IPs": list_of_ips}
+                    return {"IPs": list_of_ips}  # формат {"IPs": [а.й.п.и, 192.168.1.1, ...]}
     except sqlite3.Error:
         raise ip_handler_error()
         

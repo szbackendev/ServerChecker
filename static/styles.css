@@ -1306,6 +1306,7 @@ html {
     flex: 0 1 auto;
     margin-left: 192px;
     text-decoration: underline;
+    cursor: pointer;
 }
 
 #ip_choicer_div_server {
