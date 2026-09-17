@@ -14,37 +14,6 @@ routerauth = APIRouter(prefix="/auth", tags=["Auth"])
 
 USERS_DB_NAME = settings.USERS_DB_NAME
 
-try:
-    # Создаем БД users если еще не создана и суем туда Template
-    with sqlite3.connect(USERS_DB_NAME) as users:
-        cursor = users.cursor()
-        cursor.execute("""CREATE TABLE IF NOT EXISTS Users (
-                       id INTEGER PRIMARY KEY,
-                       login TEXT NOT NULL UNIQUE,
-                       password_hash TEXT NOT NULL,
-                       role TEXT NOT NULL,
-                       reg_date TEXT NOT NULL,
-                       token_version INTEGER DEFAULT 1,
-                       comment TEXT
-                       )""")
-    
-        cursor.execute("SELECT COUNT(*) FROM Users")
-        if cursor.fetchone()[0] == 0:
-            cursor.execute(
-                "INSERT INTO Users (login, password_hash, role, reg_date, comment) VALUES (?, ?, ?, ?, ?)",
-                (
-                    "login0",
-                    "password_hash0",
-                    "user",
-                    "yyyy-mm-dd",
-                    "Template",
-                ),
-            )
-        users.commit()
-except sqlite3.Error:
-    print("ошибка создания таблицы")
-    Response(status_code=401)
-
 class UserNotFoundError(Exception):
     pass
 

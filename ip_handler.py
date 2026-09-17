@@ -97,15 +97,6 @@ def new_IP(
         with sqlite3.connect(USERS_DB_NAME) as users:
             cursor = users.cursor()
     
-            cursor.execute("""CREATE TABLE IF NOT EXISTS known_IPs (
-                           id INTEGER PRIMARY KEY,
-                           user_id INTEGER NOT NULL,
-                           ip TEXT NOT NULL,
-                           is_active INTEGER NOT NULL,
-                           last_checked INTEGER,
-                           UNIQUE(user_id, ip)
-                           )""")
-    
             cursor.execute(
                 "INSERT OR IGNORE INTO known_IPs (user_id, ip, is_active) VALUES (?,?,?)",
                 (user_id, user_ip, 0),

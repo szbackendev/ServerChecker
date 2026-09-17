@@ -1,6 +1,6 @@
 import uvicorn
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, RedirectResponse, Response
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from admin_panel import routeradmin as adminrouter
@@ -8,9 +8,10 @@ from auth import ChangePasswordError, NotAuthenticated, UserNotFoundError
 from auth import routerauth as authrouter
 from ip_handler import ip_handler_error
 from ip_handler import routerips as ipsrouter
+from lifespan import lifespan
 from webpages import router_pages as pages_router
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 app.include_router(authrouter)
 app.include_router(ipsrouter)
 app.include_router(adminrouter)
@@ -31,15 +32,15 @@ def identical_pswds(request: Request, exc: ChangePasswordError):
 
 @app.exception_handler(ip_handler_error)
 def ips_error(request: Request, exc: ip_handler_error):
-    return Response(content={"ok": False, "message":"Ошибка в обработчике ip-адресов"}, status_code= 401)
+    return JSONResponse(content={"ok": False, "message":"Ошибка в обработчике ip-адресов"}, status_code= 401)
     
 
 def start():
     uvicorn.run(
         "main:app",
-        reload=True,
+        reload=True
     )
-    # 1. Надо сделать проверку зависимостей из файла requirements.txt
+   
 
 
 if __name__ == "__main__":
