@@ -1,5 +1,6 @@
 import uvicorn
-from fastapi import FastAPI, Request
+import json
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -35,14 +36,33 @@ def identical_pswds(request: Request, exc: ChangePasswordError):
 @app.exception_handler(ip_handler_error)
 def ips_error(request: Request, exc: ip_handler_error):
     return JSONResponse(content={"ok": False, "message":"Ошибка в обработчике ip-адресов"}, status_code= 401)
-    
+
+class custom_WebSocketDisconnect(Exception):
+    def __init__(self, message = "", *args: object) -> None:
+        super().__init__(*args)
+        self.message = message
+        print(self.message)
+
+@app.websocket(path="/ws/agent")
+async def web_socket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data_in_bytes = await websocket.receive_bytes()
+            data = json.loads(data_in_bytes)
+            print(data)
+            await websocket.send_json({"action":"ping"})
+
+    except WebSocketDisconnect:
+        # raise custom_WebSocketDisconnect("словилась ошибка вебсокета на fastapi")
+        print("Вебсокет закрылся")
 
 def start():
     uvicorn.run(
         "main:app",
         reload=True
     )
-   
+
 
 
 if __name__ == "__main__":
