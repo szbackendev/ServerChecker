@@ -302,8 +302,6 @@ def change_password(user_pswds: UserChangePasswordSchema, response: Response, fu
         raise ChangePasswordError()
     except argon2.exceptions.InvalidHashError:  # для тестов функции
         raise ChangePasswordError()
-    except argon2.exceptions.VerifyMismatchError:
-        raise ChangePasswordError()
     except argon2.exceptions.Argon2Error:
         raise ChangePasswordError()
         
