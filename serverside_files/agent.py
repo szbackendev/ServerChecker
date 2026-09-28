@@ -1,12 +1,11 @@
 import asyncio
 import json
 
+from agent_settings import settings
 from websockets.asyncio.client import connect
 
 # from websockets.asyncio.server import serve
 from websockets.exceptions import WebSocketException
-
-from settings import settings
 
 fastapi_server = settings.fastapi_server + "/ws/agent"
 
@@ -15,7 +14,6 @@ class wsError(Exception):
         super().__init__(*args)
         self.message = message
         print(self.message)
-
 
 
 # async def handler(websocket):
