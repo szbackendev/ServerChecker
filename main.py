@@ -45,14 +45,14 @@ class custom_WebSocketDisconnect(Exception):
         print(self.message)
 
 @app.websocket(path="/ws/agent")
-async def web_socket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
             data_in_bytes = await websocket.receive_bytes()
             data = json.loads(data_in_bytes)
             print(data)
-            await websocket.send_json({"action":"ping"})
+            await websocket.send_json({"step":2, "action":"ping"})
 
     except WebSocketDisconnect:
         # raise custom_WebSocketDisconnect("словилась ошибка вебсокета на fastapi")
