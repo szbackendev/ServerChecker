@@ -1930,7 +1930,7 @@ html {
     margin-bottom: 0px;
     height: 34px;
     width: 459px;
-    visibility: visible;
+    display: none;
 }
 
 #exp_date_info_texts .exp_date_success_text {
@@ -2001,18 +2001,14 @@ html {
 }
 
 #exp_date_input_dates {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     gap: 20px;
     margin-bottom: 7px;
     margin-top: 7px;
-    visibility: visible;
 }
 
-#exp_date_input_dates .exp_date_success_text {
-    display: none;
-}
 
 /* Состояние неудачи (is-failed): открываем инпуты и сообщение об ошибке */
 #exp_date_func_div_server.is-failed #exp_date_info_texts {
@@ -2021,6 +2017,11 @@ html {
 
 #exp_date_func_div_server.is-failed #exp_date_input_dates {
     display: flex;
+}
+
+/* Состояние успеха (is-success): показываем блок с информацией */
+#exp_date_func_div_server.is-success #exp_date_info_texts {
+    display: block;
 }
 
 /* Состояние успеха (is-success): показываем только блок с информацией */
