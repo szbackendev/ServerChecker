@@ -52,18 +52,18 @@ async def websocket_endpoint(websocket: WebSocket):
             data_in_bytes = await websocket.receive_bytes()
             data = json.loads(data_in_bytes)
             print(data)
-            await websocket.send_json({"step":2, "action":"ping"})
+            # await websocket.send_json({"step":2, "action":"ping"})
 
     except WebSocketDisconnect:
         # raise custom_WebSocketDisconnect("словилась ошибка вебсокета на fastapi")
         print("Вебсокет закрылся")
+        raise
 
 def start():
     uvicorn.run(
         "main:app",
         reload=True
     )
-
 
 
 if __name__ == "__main__":
