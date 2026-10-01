@@ -48,15 +48,15 @@ document.addEventListener("DOMContentLoaded", () => {
         // Если серверы есть — снимаем состояние пустоты
         section.classList.remove("is-empty");
 
-        ips.forEach((ip, index) => {
+        // Отрисовываем серверы со статусом inactive (🔴)
+        ips.forEach((ip) => {
             const opt = document.createElement("option");
             opt.value = ip;
-            
-            // По умолчанию все серверы добавляются со статусом inactive (🔴)
             opt.dataset.status = "inactive";
             opt.textContent = `🔴 | IP: ${ip}`;
 
-            if (activeIp ? ip === activeIp : index === 0) {
+            // Выбираем конкретный IP только если он был явно передан (например, после создания)
+            if (activeIp && ip === activeIp) {
                 opt.selected = true;
                 previousSelectedValue = ip;
             }
@@ -64,6 +64,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         ipSelect.appendChild(addOption);
+
+        // Если активный сервер не передавался — выбираем пункт добавления нового IP
+        if (!activeIp) {
+            addOption.selected = true;
+            previousSelectedValue = "add_new_ip";
+        }
+
         updateInterfaceState();
     }
 
@@ -71,7 +78,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (section.classList.contains("is-empty")) return;
 
         const selectedOpt = ipSelect.options[ipSelect.selectedIndex];
+
+        // Если выбран слот добавления или у опции нет статуса — показываем экран "Служба не запущена"
         if (!selectedOpt || selectedOpt.value === "add_new_ip" || !selectedOpt.dataset.status) {
+            section.classList.add("is-inactive");
             return;
         }
 
@@ -117,6 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Слушатель выбора в селекторе
     ipSelect.addEventListener("change", () => {
+        resetExpDateState();
+
         if (ipSelect.value === "add_new_ip") {
             ipSelect.value = previousSelectedValue;
             openAddIpModal();
@@ -176,9 +188,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // Функция сброса блока даты в начальное состояние (скрывает поля и текст)
+    function resetExpDateState() {
+        expDiv.classList.remove("is-failed", "is-success");
+        expInfoText.textContent = "";
+        expInfoText.innerHTML = "";
+        inputDay.value = "";
+        inputMonth.value = "";
+        inputYear.value = "";
+        expBtn.disabled = false;
+    }
+
 
     // ==========================================
-    // Логика кнопки Get / Save срока аренды
+    // Логика блока даты окончания аренды
     // ==========================================
     const expDiv = document.getElementById("exp_date_func_div_server");
     const expBtn = document.getElementById("exp_date_save_btn");
@@ -190,22 +213,25 @@ document.addEventListener("DOMContentLoaded", () => {
     function enableSaveMode() {
         expDiv.classList.remove("is-success");
         expDiv.classList.add("is-failed");
-        expInfoText.innerHTML = "Failed to get server lease expiration date.<br>Please write the date yourself and it will be saved for future requests.";
+        expInfoText.innerHTML = "Не удалось получить дату с сервера.<br>Укажите её вручную для сохранения.";
     }
 
     if (expBtn) {
         expBtn.addEventListener("click", async () => {
             const currentIp = ipSelect.value;
             if (!currentIp || currentIp === "add_new_ip") {
-                alert("Пожалуйста, сначала выберите IP адрес сервера.");
+                alert("Пожалуйста, сначала выберите IP-адрес сервера.");
                 return;
             }
 
             const isSaveMode = expDiv.classList.contains("is-failed");
 
-            // --- РЕЖИМ GET ---
+            // --- РЕЖИМ 1: Получить дату (Get) ---
             if (!isSaveMode) {
                 expBtn.disabled = true;
+                expInfoText.textContent = "Получение данных...";
+                expDiv.classList.add("is-success"); // Временно открываем блок, чтобы показать статус
+
                 try {
                     const response = await fetch(`/ips/get_lease_date?ip=${encodeURIComponent(currentIp)}`);
                     const result = await response.json();
@@ -213,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (response.ok && result.date) {
                         expDiv.classList.remove("is-failed");
                         expDiv.classList.add("is-success");
-                        expInfoText.textContent = `Server lease expiration date: ${result.date}`;
+                        expInfoText.textContent = `Дата окончания аренды: ${result.date}`;
                     } else {
                         enableSaveMode();
                     }
@@ -223,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     expBtn.disabled = false;
                 }
             } 
-            // --- РЕЖИМ SAVE ---
+            // --- РЕЖИМ 2: Сохранить дату вручную (Save) ---
             else {
                 const day = inputDay.value.trim().padStart(2, "0");
                 const month = inputMonth.value.trim().padStart(2, "0");
@@ -251,9 +277,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
 
                     if (response.ok) {
+                        // Успех: скрываем поля ввода, показываем подтверждение
                         expDiv.classList.remove("is-failed");
                         expDiv.classList.add("is-success");
-                        expInfoText.textContent = `Server lease expiration date saved: ${day}.${month}.${year}`;
+                        expInfoText.textContent = `Дата аренды сохранена: ${day}.${month}.${year}`;
+
+                        // Автоматически прячем сообщение и возвращаем блок в начальный вид через 4 секунды
+                        setTimeout(() => {
+                            resetExpDateState();
+                        }, 4000);
                     } else {
                         const errData = await response.json();
                         alert(errData.detail || "Не удалось сохранить дату.");

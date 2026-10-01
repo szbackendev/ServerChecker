@@ -31,7 +31,7 @@
                 </a>
             </div>
             <div data-type-role="flex-column" id="main_content_dashboardserver" class="flex-column">
-                <section id="main_content_section_server" class="section">
+                <section id="main_content_section_server" class="section is-inactive">
                     <div id="ip_choicer_div_server" class="container">
                         <select id="ip_choicer_server" required>
                             <option value="" disabled selected>Выбрать IP-сервера</option>
@@ -45,7 +45,7 @@
                     <div id="ip_choicer_div2_server" class="container">
                         <span id="stopped_service_text">🔴 | Служба “ServerCheckerService” не запущена.</span>
                         <button type="button" id="install_btn_server">Установить</button>
-                        <div id="undr_btn_text_server">служба уже установлена?</div>
+                        <div id="undr_btn_text_server">уже установлена?</div>
                     </div>
                     <div id="funcs_div_server" class="container">
                         <div id="ping_func_div_server">
@@ -105,7 +105,7 @@
                         </div>
                         <div id="exp_date_func_div_server">
                             <span id="exp_date_func_name_text">Дата окончания аренды сервера</span>
-                            <p id="exp_date_info_texts">Не удалось получить дату с сервера.<br>Укажите её вручную для сохранения.</p>
+                            <p id="exp_date_info_texts"></p>
                             <div id="exp_date_input_dates">
                                 <input type="text" id="exp_date_input_day" maxlength="2" placeholder="DD" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required/>
                                 <input type="text" id="exp_date_input_month" maxlength="2" placeholder="MM" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required/>
