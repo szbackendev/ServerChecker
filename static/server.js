@@ -162,4 +162,108 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     loadIps();
+
+    const dateInputs = [
+    document.getElementById("exp_date_input_day"),
+    document.getElementById("exp_date_input_month"),
+    document.getElementById("exp_date_input_year")
+    ];
+    
+    dateInputs.forEach(input => {
+        if (!input) return;
+        input.addEventListener("input", () => {
+            input.value = input.value.replace(/\D/g, "");
+        });
+    });
+
+
+    // ==========================================
+    // Логика кнопки Get / Save срока аренды
+    // ==========================================
+    const expDiv = document.getElementById("exp_date_func_div_server");
+    const expBtn = document.getElementById("exp_date_save_btn");
+    const expInfoText = document.getElementById("exp_date_info_texts");
+    const inputDay = document.getElementById("exp_date_input_day");
+    const inputMonth = document.getElementById("exp_date_input_month");
+    const inputYear = document.getElementById("exp_date_input_year");
+
+    function enableSaveMode() {
+        expDiv.classList.remove("is-success");
+        expDiv.classList.add("is-failed");
+        expInfoText.innerHTML = "Failed to get server lease expiration date.<br>Please write the date yourself and it will be saved for future requests.";
+    }
+
+    if (expBtn) {
+        expBtn.addEventListener("click", async () => {
+            const currentIp = ipSelect.value;
+            if (!currentIp || currentIp === "add_new_ip") {
+                alert("Пожалуйста, сначала выберите IP адрес сервера.");
+                return;
+            }
+
+            const isSaveMode = expDiv.classList.contains("is-failed");
+
+            // --- РЕЖИМ GET ---
+            if (!isSaveMode) {
+                expBtn.disabled = true;
+                try {
+                    const response = await fetch(`/ips/get_lease_date?ip=${encodeURIComponent(currentIp)}`);
+                    const result = await response.json();
+
+                    if (response.ok && result.date) {
+                        expDiv.classList.remove("is-failed");
+                        expDiv.classList.add("is-success");
+                        expInfoText.textContent = `Server lease expiration date: ${result.date}`;
+                    } else {
+                        enableSaveMode();
+                    }
+                } catch (error) {
+                    enableSaveMode();
+                } finally {
+                    expBtn.disabled = false;
+                }
+            } 
+            // --- РЕЖИМ SAVE ---
+            else {
+                const day = inputDay.value.trim().padStart(2, "0");
+                const month = inputMonth.value.trim().padStart(2, "0");
+                const year = inputYear.value.trim();
+
+                const numDay = parseInt(day, 10);
+                const numMonth = parseInt(month, 10);
+
+                if (!numDay || numDay < 1 || numDay > 31 || 
+                    !numMonth || numMonth < 1 || numMonth > 12 || 
+                    year.length !== 4) {
+                    alert("Введите корректную дату: День (1-31), Месяц (1-12), Год (4 цифры).");
+                    return;
+                }
+
+                expBtn.disabled = true;
+                try {
+                    const response = await fetch(`/ips/save_lease_date`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            ip: currentIp,
+                            expiration_date: `${year}-${month}-${day}`
+                        })
+                    });
+
+                    if (response.ok) {
+                        expDiv.classList.remove("is-failed");
+                        expDiv.classList.add("is-success");
+                        expInfoText.textContent = `Server lease expiration date saved: ${day}.${month}.${year}`;
+                    } else {
+                        const errData = await response.json();
+                        alert(errData.detail || "Не удалось сохранить дату.");
+                    }
+                } catch (error) {
+                    alert("Ошибка соединения с сервером при сохранении даты.");
+                } finally {
+                    expBtn.disabled = false;
+                }
+            }
+        });
+    }
 });
