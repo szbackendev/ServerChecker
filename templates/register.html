@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Register</title>
+        <title>Регистрация</title>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,initial-scale=1"/>
         <meta name="robots" content="index,follow"/>
@@ -9,18 +9,18 @@
         <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}"/>
     </head>
     <body id="register_body">
-        <div id="register_form_div">Register Form</div>
+        <div id="register_form_div">Форма регистрации</div>
         <form action="/auth/sign_up" method="post" id="register_form">
             <div id="register_login_div">
-                <label id="register_login_label">Login</label>
+                <label id="register_login_label">Зарегистрироваться</label>
             </div>
             <input type="text" placeholder="Waiting for login..." required name="login_placeholder" id="register_login_input"/>
             <div id="register_password_div">
-                <label id="register_password_label">Password</label>
+                <label id="register_password_label">Пароль</label>
             </div>
             <input type="password" required placeholder="Type your password here..." name="password_placeholder" id="register_password_input"/>
             <div id="register_button_div">
-                <button type="submit" id="register_button">Register</button>
+                <button type="submit" id="register_button">Регистрация</button>
             </div>
             <div id="register_switch_div">
                 <a href="/login" id="register_switch_link">Уже есть аккаунт? Войти</a>

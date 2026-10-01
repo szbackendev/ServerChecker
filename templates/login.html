@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Login</title>
+        <title>Вход</title>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,initial-scale=1"/>
         <meta name="robots" content="index,follow"/>
@@ -9,18 +9,18 @@
         <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}"/>
     </head>
     <body id="login_body">
-        <div id="login_text_div">Login Form</div>
+        <div id="login_text_div">Форма входа</div>
         <form action="/auth/sign_in" method="post" id="login_form">
             <div id="login_label_div">
-                <label id="login_label">Login</label>
+                <label id="login_label">Вход</label>
             </div>
-            <input type="text" placeholder="Waiting for login..." required name="login_placeholder" id="login_input"/>
+            <input type="text" placeholder="Ожидается логин..." required name="login_placeholder" id="login_input"/>
             <div id="password_label_div">
-                <label id="password_label">Password</label>
+                <label id="password_label">Пароль</label>
             </div>
-            <input type="password" required placeholder="Type your password here..." name="password_placeholder" id="password_input"/>
+            <input type="password" required placeholder="Впишите сюда ваш пароль..." name="password_placeholder" id="password_input"/>
             <div id="login_button_div">
-                <button type="submit" id="login_button">Login</button>
+                <button type="submit" id="login_button">Вход</button>
             </div>
             <div id="login_switch_div">
                 <a href="/register" id="login_switch_link">Нет аккаунта? Зарегистрироваться</a>

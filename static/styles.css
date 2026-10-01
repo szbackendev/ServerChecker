@@ -450,13 +450,10 @@ html {
 }
 
 #hello_admin_text {
-    padding: 10px;
-    font-family: Inter;
-    width: 20vw;
-    position: relative;
-    left: 40vw;
+    padding: 10px 0;
     text-align: center;
-    min-width: 210px;
+    white-space: nowrap;
+    width: 100%;
 }
 
 #admin_panel_body {
@@ -1912,25 +1909,24 @@ html {
 }
 
 #exp_date_func_name_text {
-    white-space: pre-wrap;
     font-family: Inter;
-    font-size: 20px;
+    font-size: 19px;
     text-align: center;
-    height: 24px;
-    width: 339px;
+    white-space: nowrap;
+    width: auto;
+    height: auto;
+    margin: 0;
 }
 
 #exp_date_info_texts {
-    white-space: pre-wrap;
     font-family: Inter;
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.4;          /* Комфортный межстрочный интервал */
     text-align: center;
-    position: static;
-    margin-top: 2px;
-    margin-bottom: 0px;
-    height: 34px;
-    width: 459px;
-    visibility: visible;
+    width: auto;
+    max-width: 380px;          /* Задает границу, чтобы текст не растягивался шире 2 строк */
+    height: auto;              /* Убираем 34px: блок сам подстраивается под 2 строки */
+    margin: 0;
 }
 
 #exp_date_info_texts .exp_date_success_text {

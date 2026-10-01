@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>DashboardServer</title>
+        <title>Панель сервера</title>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,initial-scale=1"/>
         <meta name="robots" content="index,follow"/>
@@ -34,23 +34,23 @@
                 <section id="main_content_section_server" class="section">
                     <div id="ip_choicer_div_server" class="container">
                         <select id="ip_choicer_server" required>
-                            <option value="" disabled selected>Select server IP</option>
-                            <option value="add_new_ip" id="6th_option" data-action="create">➕ Add new IP</option>
+                            <option value="" disabled selected>Выбрать IP-сервера</option>
+                            <option value="add_new_ip" id="6th_option" data-action="create">➕ Добавьте новый IP</option>
                         </select>
                     </div>
                     <div id="no_servers_div_server" class="container">
-                        <span id="no_servers_text">No servers added yet. Please add your first IP address.</span>
-                        <button type="button" id="no_servers_add_btn">➕ Add server</button>
+                        <span id="no_servers_text">Серверы еще не добавлены. Пожалуйста добавьте ваш первый IP-адрес.</span>
+                        <button type="button" id="no_servers_add_btn">➕ Добавить сервер</button>
                     </div>
                     <div id="ip_choicer_div2_server" class="container">
-                        <span id="stopped_service_text">🔴 | Service “ServerCheckerService” is not running</span>
-                        <button type="button" id="install_btn_server">Install</button>
-                        <div id="undr_btn_text_server">is service already installed?</div>
+                        <span id="stopped_service_text">🔴 | Служба “ServerCheckerService” не запущена.</span>
+                        <button type="button" id="install_btn_server">Установить</button>
+                        <div id="undr_btn_text_server">служба уже установлена?</div>
                     </div>
                     <div id="funcs_div_server" class="container">
                         <div id="ping_func_div_server">
                             <div id="ping_btns">
-                                <button type="button" id="ping_btn">Ping</button>
+                                <button type="button" id="ping_btn">Пинг</button>
                                 <button type="button" id="ping_settings_btn">
                                     <div data-type-icon="" id="ping_settings_icon_div" class="icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
@@ -66,14 +66,14 @@
                                     </div>
                                 </button>
                             </div>
-                            <div id="ping_summ_info_text">“Summary information about the specified settings”</div>
+                            <div id="ping_summ_info_text">“Суммарная информация о указанных настройках.”</div>
                             <div id="ping_confirm_deny_btns">
-                                <button type="button" id="ping_confirm_btn">Confirm</button>
-                                <button type="button" id="ping_deny_btn">Deny</button>
+                                <button type="button" id="ping_confirm_btn">Принять</button>
+                                <button type="button" id="ping_deny_btn">Отклонить</button>
                             </div>
                         </div>
                         <div id="speedtest_func_div_server">
-                            <button type="button" id="speedtest_btn">Speedtest</button>
+                            <button type="button" id="speedtest_btn">Тест скорости</button>
                             <div id="speedtest_download_div">
                                 <div id="speedtest_download_text_div">
                                     <div data-type-icon="" id="speedtest_dwnarrow_icon_div" class="icon">
@@ -98,34 +98,34 @@
                             </div>
                         </div>
                         <div id="accessibility_func_div_server">
-                            <span id="accessibility_func_name_text">check accessibility to domains</span>
-                            <span id="accessibility_success_text">{CurrentDomain} is accessible!</span>
-                            <input type="text" id="accessibility_input_domain" placeholder="Waiting for your domain.com" required/>
-                            <button type="submit" id="accessibility_check_btn">Check</button>
+                            <span id="accessibility_func_name_text">Проверка доступности доменов</span>
+                            <span id="accessibility_success_text">{CurrentDomain} доступен!</span>
+                            <input type="text" id="accessibility_input_domain" placeholder="Ожидаю ваш domain.com" required/>
+                            <button type="submit" id="accessibility_check_btn">Проверить</button>
                         </div>
                         <div id="exp_date_func_div_server">
-                            <span id="exp_date_func_name_text">Get the server lease expiration date</span>
-                            <p id="exp_date_info_texts">Failed to get server lease expiration date.<br>Please write the date yourself and it will be saved for future requests.</p>
+                            <span id="exp_date_func_name_text">Дата окончания аренды сервера</span>
+                            <p id="exp_date_info_texts">Не удалось получить дату с сервера.<br>Укажите её вручную для сохранения.</p>
                             <div id="exp_date_input_dates">
                                 <input type="text" id="exp_date_input_day" required/>
                                 <input type="text" id="exp_date_input_month" required/>
                                 <input type="text" id="exp_date_input_year" required/>
                             </div>
                             <button type="submit" id="exp_date_save_btn">
-                                <span class="btn-text-get">Get</span>
-                                <span class="btn-text-save">Save</span>
+                                <span class="btn-text-get">Получить</span>
+                                <span class="btn-text-save">Сохранить</span>
                             </button>
                         </div>
                     </div>
                 </section>
                 <div id="modal_add_ip" class="modal-overlay modal-hidden">
                     <div class="modal-window">
-                        <h3>Add Server IP</h3>
+                        <h3>Добавить IP-сервера</h3>
                         <input type="text" id="input_new_ip" placeholder="192.168.1.1" autocomplete="off" />
                         <div id="modal_ip_error" class="modal-error-text"></div>
                         <div class="modal-buttons">
-                            <button type="button" id="btn_cancel_ip">Cancel</button>
-                            <button type="button" id="btn_save_ip">Save</button>
+                            <button type="button" id="btn_cancel_ip">Закрыть</button>
+                            <button type="button" id="btn_save_ip">Сохранить</button>
                         </div>
                     </div>
                 </div>
