@@ -51,7 +51,7 @@ async def do_task(task_name, task_args) -> dict:
 async def schedule_task():  # записывать в файл задачки с их параметрами ко времени выполнения, после выполнения стирать строку из файла
     pass
 
-# обработчик задач в нем читатель задач и выполнятель задач и все это асинхронно       
+# обработчик задач в нем читатель задач и выполнятель задач и все это асинхронно
 async def task_handler(websocket: ClientConnection):
     async for message_in_bytes in websocket:
         message: dict = json.loads(message_in_bytes)

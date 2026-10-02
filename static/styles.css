@@ -1366,13 +1366,108 @@ html {
     height: 40px;
 }
 
+/* По умолчанию блок скрыт и не занимает место в сетке */
 #ping_summ_info_text {
-    padding: 10px;
-    font-family: Inter;
-    font-size: 18px;
+    display: none;
+    max-width: 420px;
+    line-height: 1.35;
+    font-size: 15px;
+    word-break: break-word;
     text-align: center;
-    flex: 0 0 auto;
-    visibility: hidden;
+}
+
+/* Отображение при наличии сохраненной конфигурации */
+#ping_summ_info_text.is-visible {
+    display: block !important;
+}
+
+#ping_confirm_deny_btns.is-visible {
+    visibility: visible !important;
+}
+
+/* Стилизация модальных окон настроек пинга */
+.ping-modal-window {
+    width: 390px;
+}
+
+.ping-checkbox-list,
+.ping-schedule-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.ping-control-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ping-control-item input[type="checkbox"],
+.ping-control-item input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--color-primary);
+    margin: 0;
+}
+
+.schedule-sub-block {
+    margin-left: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.schedule-block-hidden {
+    display: none !important;
+}
+
+.ping-input-field {
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    font-family: Inter;
+    font-size: 13px;
+    outline: none;
+}
+
+.ping-tz-hint {
+    font-size: 11px;
+    color: #666;
+}
+
+.ping-interval-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.ping-number-input {
+    width: 65px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid #000;
+    border-radius: 4px;
+    font-family: Inter;
+    font-size: 14px;
+}
+
+.ping-select-input {
+    height: 32px;
+    padding: 0 6px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    font-family: Inter;
+    font-size: 14px;
+    background: #fff;
+    cursor: pointer;
 }
 
 #ping_btns {
@@ -1494,6 +1589,21 @@ html {
     gap: 40px;
     height: 30px;
     visibility: hidden;
+}
+
+
+#ping_schedule_display {
+    width: 100%;
+    padding-right: 34px;
+    font-family: Inter, monospace;
+    letter-spacing: 0.5px;
+}
+
+#ping_schedule_input {
+    width: 100%;
+    font-family: Inter, monospace;
+    font-size: 14px;
+    letter-spacing: 0.5px;
 }
 
 #speedtest_download_text_div {

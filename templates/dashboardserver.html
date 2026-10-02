@@ -66,7 +66,93 @@
                                     </div>
                                 </button>
                             </div>
-                            <div id="ping_summ_info_text">“Суммарная информация о указанных настройках.”</div>
+                            <!-- Модальное окно настроек метрик пинга -->
+                            <div id="modal_ping_settings" class="modal-overlay modal-hidden">
+                                <div class="modal-window ping-modal-window">
+                                    <h3>Параметры сбора данных при пинге</h3>
+                                    <div class="ping-checkbox-list">
+                                        <label class="ping-control-item">
+                                            <input type="checkbox" id="chk_metric_status" checked disabled />
+                                            <span>Статус доступности (жив / упал)</span>
+                                        </label>
+                                        <label class="ping-control-item">
+                                            <input type="checkbox" id="chk_metric_latency" checked />
+                                            <span>Задержка до сервера (RTT / Latency)</span>
+                                        </label>
+                                        <label class="ping-control-item">
+                                            <input type="checkbox" id="chk_metric_cpu" checked />
+                                            <span>Загрузка процессора (CPU)</span>
+                                        </label>
+                                        <label class="ping-control-item">
+                                            <input type="checkbox" id="chk_metric_ram" checked />
+                                            <span>Использование памяти (RAM)</span>
+                                        </label>
+                                        <label class="ping-control-item">
+                                            <input type="checkbox" id="chk_metric_rom" />
+                                            <span>Дисковое пространство (ROM)</span>
+                                        </label>
+                                        <label class="ping-control-item">
+                                            <input type="checkbox" id="chk_metric_services" />
+                                            <span>Список активных сервисов/служб</span>
+                                        </label>
+                                    </div>
+                                    <div class="modal-buttons">
+                                        <button type="button" id="btn_cancel_ping_settings">Отмена</button>
+                                        <button type="button" id="btn_save_ping_settings">Сохранить</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Модальное окно календаря / периодичности -->
+                            <div id="modal_ping_schedule" class="modal-overlay modal-hidden">
+                                <div class="modal-window ping-modal-window">
+                                    <h3>Расписание и периодичность</h3>
+                                    <div class="ping-schedule-options">
+                                        <label class="ping-control-item">
+                                            <input type="radio" name="ping_sch_mode" value="manual" id="sch_mode_manual" checked />
+                                            <span>Ручной запуск (по кнопке)</span>
+                                        </label>
+                            
+                                        <label class="ping-control-item">
+                                            <input type="radio" name="ping_sch_mode" value="once" id="sch_mode_once" />
+                                            <span>Разовый отложенный запуск</span>
+                                        </label>
+                                        <div id="sch_sub_once" class="schedule-sub-block schedule-block-hidden">
+                                            <input 
+                                                type="text" 
+                                                id="ping_schedule_input" 
+                                                class="ping-input-field" 
+                                                placeholder="ДД/ММ/ГГГГ ЧЧ:ММ" 
+                                                maxlength="16" 
+                                                inputmode="numeric" 
+                                                autocomplete="off" 
+                                            />
+                                            <div class="ping-tz-hint" id="ping_tz_hint"></div>
+                                        </div>
+                            
+                                        <label class="ping-control-item">
+                                            <input type="radio" name="ping_sch_mode" value="interval" id="sch_mode_interval" />
+                                            <span>Периодический запуск (раз в X времени)</span>
+                                        </label>
+                                        <div id="sch_sub_interval" class="schedule-sub-block schedule-block-hidden">
+                                            <div class="ping-interval-row">
+                                                <span>Каждые</span>
+                                                <input type="number" id="ping_interval_value" min="1" max="999" value="15" class="ping-number-input" />
+                                                <select id="ping_interval_unit" class="ping-select-input">
+                                                    <option value="min">минут</option>
+                                                    <option value="hour">часов</option>
+                                                    <option value="day">дней</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-buttons">
+                                        <button type="button" id="btn_cancel_ping_schedule">Отмена</button>
+                                        <button type="button" id="btn_save_ping_schedule">Сохранить</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ping_summ_info_text"></div>
                             <div id="ping_confirm_deny_btns">
                                 <button type="button" id="ping_confirm_btn">Принять</button>
                                 <button type="button" id="ping_deny_btn">Отклонить</button>
