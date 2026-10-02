@@ -111,7 +111,7 @@ def new_IP(
                 )
     
             users.commit()
-    except sqlite3.Error as e:
+    except sqlite3.Error:
         raise ip_handler_error()
         
     return {
