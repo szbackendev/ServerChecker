@@ -96,10 +96,7 @@ html {
 
 #login_button {
     font-family: Inter;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     background-clip: border-box;
     width: 22vw;
@@ -107,10 +104,7 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -155,14 +149,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
     display: block;
     justify-content: center;
     align-items: center;
@@ -184,14 +172,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
     width: 22vw;
     display: block;
     margin-top: 5px;
@@ -255,14 +237,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
     display: block;
     justify-content: center;
     align-items: center;
@@ -295,14 +271,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
     width: 22vw;
     display: block;
     margin-top: 5px;
@@ -313,10 +283,7 @@ html {
 
 #register_button {
     font-family: Inter;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     background-clip: border-box;
     width: 22vw;
@@ -324,10 +291,7 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -386,14 +350,8 @@ html {
 
 #access_key_input {
     left: 0;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -419,17 +377,11 @@ html {
 
 #access_key_button {
     font-family: Inter;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     background-clip: border-box;
     align-items: stretch;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -462,17 +414,11 @@ html {
 
 #get_test_message_button {
     font-family: Inter;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     background-clip: border-box;
     align-items: center;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -502,14 +448,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     width: 307px;
     height: 43px;
     top: 0;
@@ -558,14 +498,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     width: 307px;
     height: 43px;
     position: relative;
@@ -582,17 +516,11 @@ html {
 
 #usr_reset_pswd_btn {
     font-family: Inter;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     background-clip: border-box;
     align-items: center;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -641,14 +569,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     width: 307px;
     height: 43px;
     top: 0;
@@ -682,17 +604,11 @@ html {
 
 #del_usr_btn {
     font-family: Inter;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     background-clip: border-box;
     align-items: center;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -716,17 +632,11 @@ html {
 
 #get_all_usrs_btn {
     font-family: Inter;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     background-clip: border-box;
     align-items: center;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -750,14 +660,8 @@ html {
 }
 
 #get_all_usrs_table {
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -886,14 +790,8 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -930,14 +828,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     text-align: left;
     vertical-align: middle;
     padding-top: 0px;
@@ -975,14 +867,14 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+     border-style: solid;
+    
+    
+    
+    border-color: rgb(0, 0, 0);
+    
+    
+    
     text-align: left;
     vertical-align: middle;
     padding-left: 5px;
@@ -1008,14 +900,8 @@ html {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
+    border-color: rgb(0, 0, 0);
+    border-style: solid;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -1189,14 +1075,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     justify-content: center;
     width: 400px;
     height: 50px;
@@ -1206,12 +1086,10 @@ html {
     font-size: 19px;             /* Увеличенный комфортный кегль */
     font-weight: 500;            /* Делает надпись и IP плотнее и выразительнее */
     color: #111111;
-
     /* Честное центрирование текста внутри селектора */
     text-align: center;
     text-align-last: center;     /* Центрирует выбранный пункт в Firefox и Chrome */
     padding: 0 35px;             /* Убираем жесткий padding-left: 80px; оставляем место под стрелочку */
-
     cursor: pointer;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -1264,14 +1142,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     font-family: Inter;
     font-size: 20px;
     text-align: center;
@@ -1485,14 +1357,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     font-family: Inter;
     font-size: 20px;
@@ -1537,14 +1403,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     background-color: rgb(255, 255, 255);
     font-family: Inter;
     font-size: 20px;
@@ -1561,14 +1421,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     width: 40px;
     height: 40px;
     background-color: rgb(255, 255, 255);
@@ -1605,14 +1459,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     font-family: Inter;
     color: rgb(0, 0, 0);
     font-size: 18px;
@@ -1633,14 +1481,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     font-size: 18px;
     width: 120px;
     height: 30px;
@@ -1800,14 +1642,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     padding-top: 0px;
     padding-right: 0px;
     padding-bottom: 0px;
@@ -1848,14 +1684,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     padding-top: 0px;
     padding-right: 0px;
     padding-bottom: 0px;
@@ -1937,14 +1767,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     text-align: center;
     padding: 0;
 }
@@ -1960,14 +1784,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     text-align: center;
     padding: 0;
 }
@@ -1983,14 +1801,8 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
     text-align: center;
     padding: 0;
 }
@@ -2046,19 +1858,12 @@ html {
 }
 
 #bottoken_text_tg {
-    padding: 10px;
+    padding: 0;
     position: static;
-    padding-top: 0px;
-    padding-right: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    margin-top: 0px;
-    margin-right: 0px;
     margin-bottom: 1px;
-    margin-left: 0px;
     font-family: Inter;
     font-size: 20px;
-    width: 241px;
+    width: 250px;
     height: 24px;
 }
 
@@ -2082,32 +1887,14 @@ html {
 }
 
 #userid_input_tg {
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    width: 211px;
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
+    width: 300px;
     height: 30px;
-    padding-top: 0px;
-    padding-right: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    margin-top: 0px;
-    margin-right: 0px;
+    padding: 0;
     margin-bottom: 15px;
-    margin-left: 0px;
 }
 
 #bottoken_input_tg {
@@ -2122,34 +1909,16 @@ html {
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
 }
 
 #btn_connect_tg {
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-bottom-left-radius: 4px;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
-    border-top-style: solid;
-    border-right-style: solid;
-    border-bottom-style: solid;
-    border-left-style: solid;
-    border-top-color: rgb(0, 0, 0);
-    border-right-color: rgb(0, 0, 0);
-    border-bottom-color: rgb(0, 0, 0);
-    border-left-color: rgb(0, 0, 0);
-    width: 160px;
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(0, 0, 0);
+    width: 175px;
     height: 40px;
     background-color: rgb(255, 255, 255);
     font-family: Inter;

@@ -13,12 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isHidden) {
             // Если открыли форму — переносим фокус на поле старого пароля
             oldPswdInput.focus();
-            toggleBtn.textContent = "Cancel";
+            toggleBtn.textContent = "Закрыть";
         } else {
             // Если закрыли — сбрасываем введенные данные
             oldPswdInput.value = "";
             newPswdInput.value = "";
-            toggleBtn.textContent = "Change password";
+            toggleBtn.textContent = "Сменить пароль";
         }
     });
 
