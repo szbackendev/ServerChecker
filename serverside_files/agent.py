@@ -1,5 +1,7 @@
 import asyncio
 import json
+from urllib.parse import urlsplit
+import re
 
 from websockets.asyncio.client import ClientConnection, connect
 
@@ -70,14 +72,14 @@ async def heartbeat_task(websocket: ClientConnection):
         print("статус жив отправлен, ждем 30 сек")
         await asyncio.sleep(30)
 
-async def run_agent_session(server_uri: str):
+async def run_agent_session(server_uri: str):    
     async with connect(uri=server_uri) as websocket:
         print("Открыли коннект с websocket")
         try:
             # data или error могут не заполняться или вообще не быть словаре в зависимости от значения у ключа "status" и "type"
             default_data = {"type":package_type.get("auth", "error"), "status": "ok", "data": "тут данные при статус ok", "error": "тут сообщение об ошибке при статус error"}
             actions = {"ping": ping}  # белый список функций которые могут исполняться на сервере
-            handshake = {"hello":True}  # первое рукопожатие при старте коннекта
+            handshake = {"hello": True}  # первое рукопожатие при старте коннекта
 
             await websocket.send(json.dumps(handshake, ensure_ascii=False).encode())
 
@@ -127,11 +129,15 @@ async def main_supervisor(server_uri: str | None = None):
     max_delay = 35
 
     if server_uri:
+        server_uri_ok = bool(re.match(r"^wss?://(?:(?:\d{1,3}\.){3}\d{1,3}|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|localhost)(?::\d{1,5})?/ws/agent/?$", server_uri))
+    else:
+        server_uri_ok = False
+
+    if server_uri_ok:
         while True:
             try:
-                await run_agent_session(server_uri=server_uri)
+                await run_agent_session(server_uri=server_uri) # type: ignore
                 retry_delay = 1
-                
             except (ConnectionError, OSError) as expected_err:
                 await asyncio.sleep(retry_delay)
                 retry_delay = min(retry_delay * 2, max_delay)

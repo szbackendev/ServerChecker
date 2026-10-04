@@ -1470,11 +1470,128 @@ html {
     cursor: pointer;
 }
 
+/* Ряд кнопок пинга */
 #ping_btns {
+    position: relative;
     display: flex;
     justify-content: center;
     height: 40px;
     gap: 25px;
+}
+
+/* Выпадающий поповер чекбоксов */
+.ping-popover {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    width: 480px;
+    background: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 6px;
+    padding: 16px 20px 12px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+    z-index: 100;
+    
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.ping-popover.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Базовая стрелочка */
+.ping-popover::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    width: 12px;
+    height: 12px;
+    background: #ffffff;
+    border-top: 1px solid #000000;
+    border-left: 1px solid #000000;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+/* Стрелочка шестерёнки (настроек) */
+#ping_settings_popover::before {
+    left: calc(50% + 50px);
+}
+
+/* Стрелочка календаря (расписания) */
+#ping_schedule_popover::before {
+    left: calc(50% + 115px);
+}
+
+/* Настройки ширины и полей поповера расписания */
+#ping_schedule_popover {
+    width: 500px;
+}
+
+.ping-schedule-manual-label {
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.ping-popover .schedule-sub-block {
+    margin-left: 0;
+    margin-top: 8px;
+}
+
+.ping-popover .ping-tz-hint {
+    margin-top: 12px;
+    font-size: 11px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.ping-popover-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ping-popover-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ping-popover-col .ping-control-item {
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.ping-popover-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.ping-popover-actions button {
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 4px;
+    border: 1px solid #000000;
+    background: #ffffff;
+    font-family: Inter;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.ping-popover-actions button:hover {
+    background-color: #f0f0f0;
 }
 
 #ping_settings_icon_div {
@@ -1578,9 +1695,13 @@ html {
     border-left-width: 1px;
     border-style: solid;
     border-color: rgb(0, 0, 0);
+    font-family: Inter;
+    color: rgb(0, 0, 0);
     font-size: 18px;
     width: 120px;
     height: 30px;
+    display: block;
+    flex: 0 0 auto;
 }
 
 #ping_confirm_deny_btns {

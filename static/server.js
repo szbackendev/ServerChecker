@@ -35,12 +35,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const pingManualBtn = document.getElementById("ping_btn");
     
     // Модальное окно метрик пинга
-    const modalPingSettings = document.getElementById("modal_ping_settings");
+    const pingSettingsPopover = document.getElementById("ping_settings_popover");
     const btnCancelPingSettings = document.getElementById("btn_cancel_ping_settings");
     const btnSavePingSettings = document.getElementById("btn_save_ping_settings");
     
-    // Модальное окно расписания пинга
-    const modalPingSchedule = document.getElementById("modal_ping_schedule");
+    // Поповер расписания пинга
+    const pingSchedulePopover = document.getElementById("ping_schedule_popover");
     const btnCancelPingSchedule = document.getElementById("btn_cancel_ping_schedule");
     const btnSavePingSchedule = document.getElementById("btn_save_ping_schedule");
     const schRadioButtons = document.querySelectorAll('input[name="ping_sch_mode"]');
@@ -291,6 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
         pingSummText.classList.remove("is-visible");
         pingConfirmDenyBtns.classList.remove("is-visible");
         if (pingScheduleInput) pingScheduleInput.value = "";
+        if (pingSettingsPopover) pingSettingsPopover.classList.remove("show");
+        if (pingSchedulePopover) pingSchedulePopover.classList.remove("show");
     }
 
     // Обработчик выбора IP в выпадающем списке
@@ -486,31 +488,53 @@ document.addEventListener("DOMContentLoaded", () => {
     schRadioButtons.forEach(radio => {
         radio.addEventListener("change", () => {
             schSubOnce.classList.toggle("schedule-block-hidden", radio.value !== "once");
+            schSubOnce.classList.toggle("schedule-block-hidden", radio.value !== "once");
             schSubInterval.classList.toggle("schedule-block-hidden", radio.value !== "interval");
+            if (pingTzHint) pingTzHint.classList.toggle("schedule-block-hidden", radio.value !== "once");
         });
     });
     
-    if (pingSettingsBtn) {
-        pingSettingsBtn.addEventListener("click", () => {
-            document.getElementById("chk_metric_latency").checked = currentPingConfig.metrics.latency;
-            document.getElementById("chk_metric_cpu").checked = currentPingConfig.metrics.cpu;
-            document.getElementById("chk_metric_ram").checked = currentPingConfig.metrics.ram;
-            document.getElementById("chk_metric_rom").checked = currentPingConfig.metrics.rom;
-            document.getElementById("chk_metric_services").checked = currentPingConfig.metrics.services;
-            modalPingSettings.classList.remove("modal-hidden");
+    if (pingSettingsBtn && pingSettingsPopover) {
+        pingSettingsBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (pingSchedulePopover) pingSchedulePopover.classList.remove("show");
+            const isCurrentlyOpen = pingSettingsPopover.classList.contains("show");
+
+            if (!isCurrentlyOpen) {
+                // Подгружаем актуальные сохраненные чекбоксы
+                document.getElementById("chk_metric_latency").checked = currentPingConfig.metrics.latency;
+                document.getElementById("chk_metric_cpu").checked = currentPingConfig.metrics.cpu;
+                document.getElementById("chk_metric_ram").checked = currentPingConfig.metrics.ram;
+                document.getElementById("chk_metric_rom").checked = currentPingConfig.metrics.rom;
+                document.getElementById("chk_metric_services").checked = currentPingConfig.metrics.services;
+
+                pingSettingsPopover.classList.add("show");
+            } else {
+                pingSettingsPopover.classList.remove("show");
+            }
         });
     }
     
-    if (pingDateChoicerBtn) {
-        pingDateChoicerBtn.addEventListener("click", () => {
+    if (pingDateChoicerBtn && pingSchedulePopover) {
+        pingDateChoicerBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const isOpen = pingSchedulePopover.classList.contains("show");
+
+            if (isOpen) {
+                pingSchedulePopover.classList.remove("show");
+                return;
+            }
+
+            if (pingSettingsPopover) pingSettingsPopover.classList.remove("show");
+
             const currentIp = ipSelect.value;
             const now = new Date();
-    
+
             const oneYearLimit = new Date(now);
             oneYearLimit.setFullYear(oneYearLimit.getFullYear() + 1);
             let effectiveMaxDate = oneYearLimit;
             let limitReason = "максимум 1 год";
-    
+
             const leaseDate = getCurrentServerLeaseDate(currentIp);
             if (leaseDate && leaseDate instanceof Date && !isNaN(leaseDate.getTime())) {
                 if (leaseDate < effectiveMaxDate) {
@@ -518,128 +542,168 @@ document.addEventListener("DOMContentLoaded", () => {
                     limitReason = `окончание аренды (${formatDateToDisplay(leaseDate)})`;
                 }
             }
-    
+
             if (pingTzHint) {
                 const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 const maxDisplay = formatDateTimeObjToDisplay(effectiveMaxDate);
                 pingTzHint.innerHTML = `Часовой пояс: <b>${tzName}</b>.<br>Доступно до: <b>${maxDisplay}</b> [${limitReason}].`;
             }
-    
+
             const modeRadio = document.querySelector(`input[name="ping_sch_mode"][value="${currentPingConfig.schedule.mode}"]`);
             if (modeRadio) modeRadio.checked = true;
-    
+
             intervalValueInput.value = currentPingConfig.schedule.intervalVal;
             intervalUnitSelect.value = currentPingConfig.schedule.intervalUnit;
-    
+
             schSubOnce.classList.toggle("schedule-block-hidden", currentPingConfig.schedule.mode !== "once");
             schSubInterval.classList.toggle("schedule-block-hidden", currentPingConfig.schedule.mode !== "interval");
+            schSubOnce.classList.toggle("schedule-block-hidden", currentPingConfig.schedule.mode !== "once");
+            schSubInterval.classList.toggle("schedule-block-hidden", currentPingConfig.schedule.mode !== "interval");
+            if (pingTzHint) pingTzHint.classList.toggle("schedule-block-hidden", currentPingConfig.schedule.mode !== "once");
 
             if (currentPingConfig.schedule.datetimeLocal) {
                 pingScheduleInput.value = formatDateTimeToDisplay(currentPingConfig.schedule.datetimeLocal);
             } else {
                 pingScheduleInput.value = "";
             }
-    
-            modalPingSchedule.classList.remove("modal-hidden");
+
+            pingSchedulePopover.classList.add("show");
         });
     }
     
-    btnCancelPingSettings.addEventListener("click", () => modalPingSettings.classList.add("modal-hidden"));
-    btnCancelPingSchedule.addEventListener("click", () => modalPingSchedule.classList.add("modal-hidden"));
-    
-    btnSavePingSettings.addEventListener("click", () => {
-        currentPingConfig.metrics.latency = document.getElementById("chk_metric_latency").checked;
-        currentPingConfig.metrics.cpu = document.getElementById("chk_metric_cpu").checked;
-        currentPingConfig.metrics.ram = document.getElementById("chk_metric_ram").checked;
-        currentPingConfig.metrics.rom = document.getElementById("chk_metric_rom").checked;
-        currentPingConfig.metrics.services = document.getElementById("chk_metric_services").checked;
-    
-        modalPingSettings.classList.add("modal-hidden");
-        renderPingSummary();
-    });
-    
-    btnSavePingSchedule.addEventListener("click", () => {
-        const selectedMode = document.querySelector('input[name="ping_sch_mode"]:checked').value;
-        let isoString = "";
-    
-        if (selectedMode === "once") {
-            const val = pingScheduleInput.value.trim();
+    // 2. Кнопки "Отмена" для обоих поповеров
+    if (btnCancelPingSettings && pingSettingsPopover) {
+        btnCancelPingSettings.addEventListener("click", () => {
+            pingSettingsPopover.classList.remove("show");
+        });
+    }
 
-            if (!val) {
-                alert("Пожалуйста, введите дату.");
-                pingScheduleInput.focus();
-                return;
-            }
+    if (btnCancelPingSchedule && pingSchedulePopover) {
+        btnCancelPingSchedule.addEventListener("click", () => {
+            pingSchedulePopover.classList.remove("show");
+        });
+    }
 
-            const match = val.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?$/);
-            if (!match) {
-                alert("Неверный формат. Введите дату: ДД/ММ/ГГГГ или ДД/ММ/ГГГГ ЧЧ:ММ");
-                pingScheduleInput.focus();
-                return;
-            }
+    // 3. Кнопка "Применить" для настроек
+    if (btnSavePingSettings) {
+        btnSavePingSettings.addEventListener("click", () => {
+            currentPingConfig.metrics.latency = document.getElementById("chk_metric_latency").checked;
+            currentPingConfig.metrics.cpu = document.getElementById("chk_metric_cpu").checked;
+            currentPingConfig.metrics.ram = document.getElementById("chk_metric_ram").checked;
+            currentPingConfig.metrics.rom = document.getElementById("chk_metric_rom").checked;
+            currentPingConfig.metrics.services = document.getElementById("chk_metric_services").checked;
 
-            const day = parseInt(match[1], 10);
-            const month = parseInt(match[2], 10);
-            const year = parseInt(match[3], 10);
+            pingSettingsPopover.classList.remove("show");
+            renderPingSummary();
+        });
+    }
 
-            const hours = match[4] !== undefined ? parseInt(match[4], 10) : 0;
-            const mins = match[5] !== undefined ? parseInt(match[5], 10) : 0;
-
-            if (month < 1 || month > 12 || hours < 0 || hours > 23 || mins < 0 || mins > 59) {
-                alert("Некорректные значения месяца (1-12), часов (00-23) или минут (00-59).");
-                pingScheduleInput.focus();
-                return;
-            }
-
-            const targetDate = new Date(year, month - 1, day, hours, mins, 0);
-            if (
-                targetDate.getFullYear() !== year ||
-                targetDate.getMonth() !== month - 1 ||
-                targetDate.getDate() !== day
-            ) {
-                alert("Такой даты не существует в календаре (проверьте число дней в месяце).");
-                pingScheduleInput.focus();
-                return;
-            }
-
-            const now = new Date();
-            if (targetDate <= now) {
-                alert("Нельзя запланировать действие в прошлом времени.");
-                pingScheduleInput.focus();
-                return;
-            }
-
-            const currentIp = ipSelect.value;
-            const oneYearLimit = new Date(now);
-            oneYearLimit.setFullYear(oneYearLimit.getFullYear() + 1);
-            let maxLimit = oneYearLimit;
-
-            const leaseDate = getCurrentServerLeaseDate(currentIp);
-            if (leaseDate && leaseDate instanceof Date && !isNaN(leaseDate.getTime())) {
-                if (leaseDate < maxLimit) {
-                    maxLimit = leaseDate;
-                }
-            }
-
-            if (targetDate > maxLimit) {
-                alert("Выбранная дата превышает допустимый предел (1 год или срок окончания аренды).");
-                pingScheduleInput.focus();
-                return;
-            }
-
-            const pad = (n) => String(n).padStart(2, "0");
-            pingScheduleInput.value = `${pad(day)}/${pad(month)}/${year} ${pad(hours)}:${pad(mins)}`;
-            isoString = `${year}-${pad(month)}-${pad(day)}T${pad(hours)}:${pad(mins)}`;
+    // 4. Закрытие поповеров при клике в любое свободное место страницы
+    document.addEventListener("click", (e) => {
+        if (
+            pingSettingsPopover &&
+            pingSettingsPopover.classList.contains("show") &&
+            !pingSettingsPopover.contains(e.target) &&
+            pingSettingsBtn &&
+            !pingSettingsBtn.contains(e.target)
+        ) {
+            pingSettingsPopover.classList.remove("show");
         }
-    
-        currentPingConfig.schedule.mode = selectedMode;
-        currentPingConfig.schedule.datetimeLocal = isoString;
-        currentPingConfig.schedule.intervalVal = parseInt(intervalValueInput.value, 10) || 15;
-        currentPingConfig.schedule.intervalUnit = intervalUnitSelect.value;
-    
-        modalPingSchedule.classList.add("modal-hidden");
-        renderPingSummary();
+        if (
+            pingSchedulePopover &&
+            pingSchedulePopover.classList.contains("show") &&
+            !pingSchedulePopover.contains(e.target) &&
+            pingDateChoicerBtn &&
+            !pingDateChoicerBtn.contains(e.target)
+        ) {
+            pingSchedulePopover.classList.remove("show");
+        }
     });
+    
+    if (btnSavePingSchedule) {
+        btnSavePingSchedule.addEventListener("click", () => {
+            const selectedMode = document.querySelector('input[name="ping_sch_mode"]:checked').value;
+            let isoString = "";
+        
+            if (selectedMode === "once") {
+                const val = pingScheduleInput.value.trim();
+    
+                if (!val) {
+                    alert("Пожалуйста, введите дату.");
+                    pingScheduleInput.focus();
+                    return;
+                }
+    
+                const match = val.match(/^(\d{2})\/(\d{2})\/(\d{4})(?:\s+(\d{2}):(\d{2}))?$/);
+                if (!match) {
+                    alert("Неверный формат. Введите дату: ДД/ММ/ГГГГ или ДД/ММ/ГГГГ ЧЧ:ММ");
+                    pingScheduleInput.focus();
+                    return;
+                }
+    
+                const day = parseInt(match[1], 10);
+                const month = parseInt(match[2], 10);
+                const year = parseInt(match[3], 10);
+    
+                const hours = match[4] !== undefined ? parseInt(match[4], 10) : 0;
+                const mins = match[5] !== undefined ? parseInt(match[5], 10) : 0;
+    
+                if (month < 1 || month > 12 || hours < 0 || hours > 23 || mins < 0 || mins > 59) {
+                    alert("Некорректные значения месяца (1-12), часов (00-23) или минут (00-59).");
+                    pingScheduleInput.focus();
+                    return;
+                }
+    
+                const targetDate = new Date(year, month - 1, day, hours, mins, 0);
+                if (
+                    targetDate.getFullYear() !== year ||
+                    targetDate.getMonth() !== month - 1 ||
+                    targetDate.getDate() !== day
+                ) {
+                    alert("Такой даты не существует в календаре (проверьте число дней в месяце).");
+                    pingScheduleInput.focus();
+                    return;
+                }
+    
+                const now = new Date();
+                if (targetDate <= now) {
+                    alert("Нельзя запланировать действие в прошлом времени.");
+                    pingScheduleInput.focus();
+                    return;
+                }
+    
+                const currentIp = ipSelect.value;
+                const oneYearLimit = new Date(now);
+                oneYearLimit.setFullYear(oneYearLimit.getFullYear() + 1);
+                let maxLimit = oneYearLimit;
+    
+                const leaseDate = getCurrentServerLeaseDate(currentIp);
+                if (leaseDate && leaseDate instanceof Date && !isNaN(leaseDate.getTime())) {
+                    if (leaseDate < maxLimit) {
+                        maxLimit = leaseDate;
+                    }
+                }
+    
+                if (targetDate > maxLimit) {
+                    alert("Выбранная дата превышает допустимый предел (1 год или срок окончания аренды).");
+                    pingScheduleInput.focus();
+                    return;
+                }
+    
+                const pad = (n) => String(n).padStart(2, "0");
+                pingScheduleInput.value = `${pad(day)}/${pad(month)}/${year} ${pad(hours)}:${pad(mins)}`;
+                isoString = `${year}-${pad(month)}-${pad(day)}T${pad(hours)}:${pad(mins)}`;
+            }
+        
+            currentPingConfig.schedule.mode = selectedMode;
+            currentPingConfig.schedule.datetimeLocal = isoString;
+            currentPingConfig.schedule.intervalVal = parseInt(intervalValueInput.value, 10) || 15;
+            currentPingConfig.schedule.intervalUnit = intervalUnitSelect.value;
+        
+            if (pingSchedulePopover) pingSchedulePopover.classList.remove("show");
+            renderPingSummary();
+        });
+    };
     
     function renderPingSummary() {
         const activeMetrics = ["Доступность"];
@@ -682,9 +746,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     if (pingManualBtn) {
-        pingManualBtn.addEventListener("click", () => {
-            if (!pingSummText.classList.contains("is-visible")) {
-                renderPingSummary();
+        pingManualBtn.addEventListener("click", async () => {
+            const currentIp = ipSelect.value;
+            if (!currentIp || currentIp === "add_new_ip") {
+                alert("Пожалуйста, сначала выберите IP-адрес сервера.");
+                return;
+            }
+
+            // Токен не передаем: кука авторизации уходит автоматически с запросом
+            const payload = {
+                metrics: currentPingConfig.metrics,
+                schedule: currentPingConfig.schedule
+            };
+
+            pingManualBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/ips/task/ping?ip=${encodeURIComponent(currentIp)}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    pingSummText.textContent = "✅ Задача пинга отправлена на сервер.";
+                    pingSummText.classList.add("is-visible");
+                    setTimeout(() => {
+                        pingSummText.classList.remove("is-visible");
+                        pingSummText.textContent = "";
+                    }, 3000);
+                } else {
+                    const errData = await response.json().catch(() => ({}));
+                    alert(errData.detail || "Не удалось запустить пинг.");
+                }
+            } catch (err) {
+                console.error("Ошибка при отправке задачи пинга:", err);
+                alert("Сетевая ошибка при обращении к серверу.");
+            } finally {
+                pingManualBtn.disabled = false;
             }
         });
     }
