@@ -150,10 +150,10 @@ async def main_supervisor(server_uri: str | None = None):
 
 
 if __name__ == "__main__":
-    fastapi_server = settings.fastapi_server + "/ws/agent"  # адрес сервера типа ws:// или wss:// и + адрес обработчика
+    # fastapi_server = settings.fastapi_server + "/ws/agent"  # адрес сервера типа ws:// или wss:// и + адрес обработчика
     # сделать проверку формата адреса через regexp
-    try:
-        asyncio.run(main_supervisor(server_uri = fastapi_server))
-    except KeyboardInterrupt:
-        print("\nРабота Агента прервана оператором")
-        raise
+    # try:
+    #     asyncio.run(main_supervisor(server_uri = fastapi_server))
+    # except KeyboardInterrupt:
+    #     print("\nРабота Агента прервана оператором")
+    #     raise

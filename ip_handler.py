@@ -50,7 +50,7 @@ def get_user_id(
 @routerips.get("/get_ips", description="user access")
 def prev_IPs(
     user_id: Annotated[str, Depends(get_user_id)],
-response: Response):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
+    response: Response):  # проверка есть ли таблица known_IPs, если нет то вернуть строку: 'список пред. адресов пуст', если есть то вернуть все 5 ip.
 
     if user_id in (0, "0"):
         raise ip_handler_error()

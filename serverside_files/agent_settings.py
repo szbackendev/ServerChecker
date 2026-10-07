@@ -3,7 +3,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    fastapi_server: str
 
     model_config = SettingsConfigDict(
         env_file="serverside_files/agent_settings.env",  # если другое название файла окружения, то изменить somedata.env на ваше имяфайла.env
