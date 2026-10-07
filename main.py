@@ -6,6 +6,8 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from admin_panel import routeradmin as adminrouter
+from agent_routes import AgentError
+from agent_routes import router_agent as agent_router
 from auth import ChangePasswordError, NotAuthenticated, UserNotFoundError
 from auth import routerauth as authrouter
 from ip_handler import ip_handler_error
@@ -19,6 +21,7 @@ app.include_router(ipsrouter)
 app.include_router(adminrouter)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(pages_router)
+app.include_router(agent_router)
 
 @app.exception_handler(NotAuthenticated)
 def not_authenticated_handler(request: Request, exc: NotAuthenticated):
@@ -34,7 +37,12 @@ def identical_pswds(request: Request, exc: ChangePasswordError):
 
 @app.exception_handler(ip_handler_error)
 def ips_error(request: Request, exc: ip_handler_error):
-    return JSONResponse(content={"ok": False, "message":"Ошибка в обработчике ip-адресов"}, status_code= 401)
+    return JSONResponse(content={"ok": False, "message":"Ошибка в обработчике ip-адресов"}, status_code=401)
+
+@app.exception_handler(AgentError)
+def agent_error(request: Request, exc: AgentError):
+    return JSONResponse(content={"ok": False, "message":"Ошибка при обращении Агента"}, status_code=401)
+
 
 
 def start():
