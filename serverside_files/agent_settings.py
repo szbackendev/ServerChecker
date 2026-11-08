@@ -8,9 +8,10 @@ class Settings(BaseSettings):
         env_file="serverside_files/agent_settings.env",  # если другое название файла окружения, то изменить somedata.env на ваше имяфайла.env
         env_file_encoding="utf-8",
     )
-
+    fastapi_server: str
 try:
     settings = Settings()  # type: ignore
+    print(settings.model_dump())
 except ValidationError as e:
     print(repr(e.errors()[0]["type"]))
 except ImportError as e:

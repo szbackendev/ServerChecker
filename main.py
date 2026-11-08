@@ -16,10 +16,10 @@ from lifespan import lifespan
 from webpages import router_pages as pages_router
 
 app = FastAPI(lifespan=lifespan)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(authrouter)
 app.include_router(ipsrouter)
 app.include_router(adminrouter)
-app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(pages_router)
 app.include_router(agent_router)
 

@@ -12,3 +12,5 @@ settings.env
 _pg*
 {{*
 pinegrow*
+.agents/
+AGENTS.md

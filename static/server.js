@@ -155,7 +155,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!targetOpt) return false;
 
         try {
-            const res = await fetch(`/ips/status?ip=${encodeURIComponent(ip)}`);
+            const res = await fetch(`/ips/access?ip=${encodeURIComponent(ip)}`);
+            // надо еще отправлять логин текущиего пользователя в ручку, но так чтоб его нельзя было перехватить
             if (!res.ok) {
                 // Если ручка еще не готова на бэкенде (404/500) — считаем неактивным
                 setServerStatusUI(targetOpt, ip, false);
