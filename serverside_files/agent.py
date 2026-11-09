@@ -1,9 +1,11 @@
 import asyncio
 import json
-from urllib.parse import urlsplit
 import re
+from typing import Annotated
 
 from websockets.asyncio.client import ClientConnection, connect
+from pydantic import AnyUrl, UrlConstraints, TypeAdapter
+from pydantic_core import ValidationError
 
 # from websockets.asyncio.server import serve
 from websockets.exceptions import WebSocketException
@@ -13,12 +15,31 @@ from agent_settings import settings
 # auth для рукопожатия и передачи токена, heartbeat для поддержания связи, command для команды от мастера, result для ответа от агента, error при сбое
 package_type = {"auth": "auth", "heartbeat": "heartbeat", "command": "command", "result": "result", "error": "error"}  # для alias можно менять ключи
 
-class wsError(Exception):
+class agent_error(Exception):
     def __init__(self, message: str = "", *args: object) -> None:
         super().__init__(*args)
         self.message = message
         print(self.message)
 
+class CustomURI:
+    def __init__(self) -> None:
+        pass
+
+    def _validate_uri_scheme(self, uri: str, default_scheme: str = "https") -> str:  # проверяет просто наличие какой-либо схемы в URI
+        if not "://" in uri:
+            uri = default_scheme + "://" + uri
+
+        return uri
+        
+    type UriType = Annotated[AnyUrl, UrlConstraints(allowed_schemes=["http", "https"], default_path="/api/agent/stream", preserve_empty_path=False)]
+
+    def validate_uri(self, uri: str, UriType = UriType) -> str:
+        schemed_uri = self._validate_uri_scheme(uri)
+        adapter = TypeAdapter(UriType)
+        validated_uri = adapter.validate_python(schemed_uri).encoded_string()
+        return validated_uri
+
+uri_validator = CustomURI().validate_uri
 
 # async def handler(websocket):
 #     async with connect(uri=fastapi_server, ping_interval=60) as websocket:
@@ -121,22 +142,28 @@ async def run_agent_session(server_uri: str):
             #     raise wsError("падение из-за неправильного типа данных полученных от сервера fastapi")
             
         except WebSocketException:
-            raise wsError("упал вебсокет")
+            raise agent_error("упал вебсокет")
 
 
-async def main_supervisor(server_uri: str | None = None):
+async def main_supervisor(server_uri: str):
     retry_delay = 1
     max_delay = 35
 
-    if server_uri:
-        server_uri_ok = bool(re.match(r"^wss?://(?:(?:\d{1,3}\.){3}\d{1,3}|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|localhost)(?::\d{1,5})?/ws/agent/?$", server_uri))
-    else:
-        server_uri_ok = False
+    try:
+        validated_uri = uri_validator(server_uri)
+    except ValidationError as e:
+        raise agent_error(repr(e))
+        
+    # устарело, т.к. свыше построен валидатор
+    # if server_uri:
+    #     server_uri_ok = bool(re.match(r"^wss?://(?:(?:\d{1,3}\.){3}\d{1,3}|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}|localhost)(?::\d{1,5})?/api/agent/stream/?$", server_uri))
+    # else:
+    #     server_uri_ok = False
 
-    if server_uri_ok:
+    if validated_uri:
         while True:
             try:
-                await run_agent_session(server_uri=server_uri) # type: ignore
+                await run_agent_session(server_uri=validated_uri) # type: ignore
                 retry_delay = 1
             except (ConnectionError, OSError) as expected_err:
                 await asyncio.sleep(retry_delay)
@@ -146,7 +173,7 @@ async def main_supervisor(server_uri: str | None = None):
                 await asyncio.sleep(retry_delay)
                 print("Словили неожиданную ошибку", unexpected_err)
     else:
-        raise wsError("адрес сервера не передан")
+        raise agent_error("адрес сервера не передан")
 
 
 if __name__ == "__main__":

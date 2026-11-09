@@ -139,5 +139,7 @@ def ip_choice():
 
 @routerips.get("/access", description="user access")
 def server_access(ip: Annotated[FilterParams, Query()], user_id: Annotated[str, Depends(get_user_id)]): # из куки вытащить userid и проверить есть ли у этого пользователя доступ к запрашиваемому серверу
-    if user_id == 0:
-        raise ip_handler_error("")
+    if not user_id_check(user_id):
+        raise ip_handler_error("Ошибка во взятии user_id из payload JWT-токена")
+
+    
